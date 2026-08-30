@@ -1,0 +1,6662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Biblioteca Nova Aparecida</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
+  :root{
+    --paper: #EFE6D0;
+    --paper-deep: #E4D8B9;
+    --ink: #2A2A22;
+    --forest: #24463A;
+    --forest-deep: #16302A;
+    --rust: #8A3324;
+    --rust-deep: #6E2519;
+    --gold: #B8923F;
+    --card: #F8F3E4;
+    --line: #C9BA92;
+    --muted: #6E6650;
+    --ok: #3E6B4F;
+    --danger: #8A3324;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.035) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: 'Source Sans 3', sans-serif;
+    min-height:100vh;
+  }
+  .app{max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+
+  header.top{
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:3px double var(--forest-deep);
+    padding-bottom:18px;margin-bottom:24px;
+    flex-wrap:wrap;gap:12px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand .stamp{
+    width:52px;height:52px;border-radius:50%;
+    border:2.5px solid var(--rust);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--rust);font-family:'IBM Plex Mono',monospace;font-weight:600;
+    font-size:11px;line-height:1.1;text-align:center;transform:rotate(-8deg);
+    letter-spacing:0.5px;
+  }
+  .brand h1{
+    font-family:'Lora',serif;font-weight:700;font-size:26px;margin:0;color:var(--forest-deep);
+  }
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:0.4px;text-transform:uppercase;}
+
+  .tabs{display:flex;gap:6px;}
+  .tab-btn{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:0.5px;
+    padding:9px 16px;border:1.5px solid var(--forest-deep);background:transparent;
+    color:var(--forest-deep);cursor:pointer;border-radius:2px;
+    text-transform:uppercase;transition:all .15s;
+  }
+  .tab-btn.active{background:var(--forest-deep);color:var(--paper);}
+  .tab-btn:not(.active):hover{background:rgba(36,70,58,0.1);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .toolbar{
+    display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px;
+  }
+  .field{display:flex;flex-direction:column;gap:5px;}
+  .field label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);font-weight:600;}
+  input,select{
+    font-family:'Source Sans 3',sans-serif;font-size:14.5px;
+    padding:9px 10px;border:1.5px solid var(--line);border-radius:3px;
+    background:var(--card);color:var(--ink);min-width:150px;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--forest);}
+
+  .btn{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.4px;
+    padding:9px 15px;border-radius:3px;border:1.5px solid var(--forest-deep);
+    background:var(--forest-deep);color:var(--paper);cursor:pointer;
+    text-transform:uppercase;white-space:nowrap;transition:transform .1s, opacity .15s;
+  }
+  .btn:hover{opacity:0.88;}
+  .btn:active{transform:translateY(1px);}
+  .btn.ghost{background:transparent;color:var(--forest-deep);}
+  .btn.rust{background:var(--rust);border-color:var(--rust-deep);}
+  .btn.gold{background:var(--gold);border-color:#8f6d2a;color:#2A2110;}
+  .btn.small{padding:6px 11px;font-size:11px;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+  .add-card{
+    background:var(--card);border:1.5px solid var(--line);border-radius:4px;
+    padding:18px 20px;margin-bottom:26px;
+    box-shadow:3px 3px 0 rgba(36,70,58,0.08);
+  }
+  .add-card h3{
+    font-family:'Lora',serif;margin:0 0 14px;font-size:16px;color:var(--forest-deep);
+    display:flex;align-items:center;gap:8px;
+  }
+  .add-grid{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+
+  .livro-dropdown{
+    display:none;position:absolute;top:100%;left:0;right:0;z-index:20;
+    background:var(--card);border:1.5px solid var(--forest-deep);border-top:none;
+    border-radius:0 0 4px 4px;max-height:320px;overflow-y:auto;
+    box-shadow:3px 4px 0 rgba(36,70,58,0.14);
+  }
+  .livro-dropdown.show{display:block;}
+  .livro-item{
+    padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line);
+  }
+  .livro-item:last-child{border-bottom:none;}
+  .livro-item:hover, .livro-item.hl{background:rgba(184,146,63,0.16);}
+  .livro-item .li-titulo{font-family:'Lora',serif;font-weight:600;font-size:14px;color:var(--forest-deep);}
+  .livro-item .li-meta{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .livro-item .li-meta b{color:var(--ink);}
+  .livro-dropdown .li-empty{padding:14px 12px;font-size:13px;color:var(--muted);font-style:italic;text-align:center;}
+  .livro-chip{
+    margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:rgba(62,107,79,0.10);border:1px solid rgba(62,107,79,0.35);border-radius:3px;
+    padding:8px 10px;font-size:12.5px;
+  }
+  .livro-chip .lc-info b{font-family:'Lora',serif;color:var(--forest-deep);}
+  .livro-chip .lc-info span{display:block;color:var(--muted);font-size:11px;margin-top:2px;}
+  .livro-chip button{
+    background:none;border:none;color:var(--rust);cursor:pointer;font-size:11px;
+    text-transform:uppercase;letter-spacing:0.4px;font-family:'IBM Plex Mono',monospace;
+    padding:4px 6px;white-space:nowrap;
+  }
+  .livro-chip button:hover{text-decoration:underline;}
+
+  .count-bar{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);
+    margin-bottom:14px;letter-spacing:0.3px;
+  }
+
+  .cards-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;
+  }
+  .catalog-card{
+    position:relative;background:var(--card);
+    border:1px solid var(--line);border-radius:2px;
+    padding:16px 16px 14px;
+    box-shadow:2px 2px 0 rgba(36,70,58,0.10);
+  }
+  .catalog-card::before{
+    content:"";position:absolute;top:-1px;right:18px;width:34px;height:10px;
+    background:var(--paper-deep);border:1px solid var(--line);border-top:none;
+    border-radius:0 0 3px 3px;
+  }
+  .catalog-card.inativo{opacity:0.55;}
+  .cc-codigo{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--rust);
+    letter-spacing:0.5px;margin-bottom:6px;
+  }
+  .cc-titulo{font-family:'Lora',serif;font-weight:600;font-size:16.5px;color:var(--forest-deep);margin:0 0 4px;line-height:1.25;}
+  .cc-autor{font-size:13px;color:var(--ink);margin-bottom:2px;font-style:italic;}
+  .cc-cat{
+    display:inline-block;font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;
+    color:var(--forest-deep);background:rgba(36,70,58,0.10);padding:2px 8px;border-radius:10px;
+    margin-top:6px;
+  }
+  .cc-meta{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .cc-meta span{display:inline-block;}
+  .cc-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+  }
+  .cc-qty{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);}
+  .cc-qty b{color:var(--ink);font-size:14px;}
+  .cc-status{font-size:10.5px;text-transform:uppercase;letter-spacing:0.4px;font-weight:700;}
+  .cc-status.on{color:var(--ok);}
+  .cc-status.off{color:var(--danger);}
+  .cc-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+
+  .empty{
+    text-align:center;padding:50px 20px;color:var(--muted);
+    font-family:'Lora',serif;font-style:italic;font-size:15px;
+  }
+
+  table{width:100%;border-collapse:collapse;background:var(--card);}
+  thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:0.5px;color:var(--muted);text-align:left;padding:9px 10px;
+    border-bottom:2px solid var(--forest-deep);
+  }
+  tbody td{padding:11px 10px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:top;}
+  tbody tr:hover{background:rgba(184,146,63,0.08);}
+  .badge{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:0.4px;font-weight:700;
+    padding:3px 9px;border-radius:10px;display:inline-block;
+  }
+  .badge.aberto{background:rgba(138,51,36,0.14);color:var(--rust-deep);}
+  .badge.devolvido{background:rgba(62,107,79,0.14);color:var(--ok);}
+  .table-wrap{background:var(--card);border:1.5px solid var(--line);border-radius:4px;overflow:hidden;box-shadow:3px 3px 0 rgba(36,70,58,0.08);}
+  .table-wrap table{margin:0;}
+  .table-scroll{overflow-x:auto;}
+
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(22,48,42,0.55);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .modal-bg.show{display:flex;}
+  .modal{
+    background:var(--paper);border:2px solid var(--forest-deep);border-radius:4px;
+    padding:24px;max-width:420px;width:100%;box-shadow:6px 6px 0 rgba(0,0,0,0.15);
+  }
+  .modal h3{font-family:'Lora',serif;margin:0 0 16px;color:var(--forest-deep);font-size:18px;}
+  .modal .field{margin-bottom:12px;width:100%;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+
+  .toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--forest-deep);color:var(--paper);padding:11px 22px;border-radius:3px;
+    font-family:'IBM Plex Mono',monospace;font-size:13px;opacity:0;pointer-events:none;
+    transition:all .25s;z-index:60;box-shadow:2px 2px 0 rgba(0,0,0,0.2);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .loading{text-align:center;padding:60px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px;}
+
+  /* Auth */
+  .auth-box{display:flex;align-items:center;gap:10px;}
+  .auth-btn-google{
+    display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);
+    border-radius:3px;padding:8px 14px;font-size:13px;font-weight:600;color:#3c4043;cursor:pointer;
+    font-family:'Source Sans 3',sans-serif;
+  }
+  .auth-btn-google:hover{box-shadow:0 1px 3px rgba(0,0,0,0.15);}
+  .auth-user{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+  .auth-user img{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);}
+  .auth-user .au-email{color:var(--forest-deep);font-family:'IBM Plex Mono',monospace;font-size:11.5px;}
+  .auth-user .au-badge{
+    font-size:9.5px;text-transform:uppercase;letter-spacing:0.4px;font-weight:700;padding:2px 6px;border-radius:8px;
+  }
+  .auth-user .au-badge.ok{background:rgba(62,107,79,0.15);color:var(--ok);}
+  .auth-user .au-badge.no{background:rgba(138,51,36,0.15);color:var(--rust-deep);}
+  .auth-user button{
+    background:none;border:1px solid var(--line);color:var(--muted);cursor:pointer;font-size:11px;
+    padding:5px 9px;border-radius:3px;font-family:'IBM Plex Mono',monospace;
+  }
+  .auth-user button:hover{border-color:var(--rust);color:var(--rust);}
+
+  /* Admin gating */
+  .admin-note{
+    background:rgba(184,146,63,0.14);border:1px solid var(--gold);color:#5c4718;
+    padding:10px 14px;border-radius:3px;font-size:13px;margin-bottom:18px;
+  }
+  .admin-only{display:none;}
+  body.is-admin .admin-only{display:block;}
+  body.is-admin .admin-only-inline{display:inline-flex;}
+  .admin-only-inline{display:none;}
+
+  /* Dashboard */
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:8px;}
+  .stat-card{
+    background:var(--card);border:1.5px solid var(--line);border-radius:4px;padding:20px 20px 18px;
+    box-shadow:3px 3px 0 rgba(36,70,58,0.08);
+  }
+  .stat-card.stat-alert{border-color:var(--rust);box-shadow:3px 3px 0 rgba(138,51,36,0.12);}
+  .stat-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);font-weight:600;}
+  .stat-value{font-family:'Lora',serif;font-weight:700;font-size:38px;color:var(--forest-deep);margin-top:6px;line-height:1;}
+  .stat-card.stat-alert .stat-value{color:var(--rust);}
+  .stat-sub{font-size:12px;color:var(--muted);margin-top:8px;}
+
+  /* Loans table extras */
+  tbody tr.atrasado{background:rgba(138,51,36,0.08);}
+  tbody tr.atrasado:hover{background:rgba(138,51,36,0.14);}
+  .badge.atrasado{background:rgba(138,51,36,0.85);color:#fff;}
+  .badge.renovado{background:rgba(184,146,63,0.25);color:#5c4718;}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap;}
+  .evt-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:0.4px;font-weight:700;padding:2px 8px;border-radius:10px;}
+  .evt-tag[data-tipo="Empréstimo"]{background:rgba(36,70,58,0.12);color:var(--forest-deep);}
+  .evt-tag[data-tipo="Renovação"]{background:rgba(184,146,63,0.2);color:#5c4718;}
+  .evt-tag[data-tipo="Devolução"]{background:rgba(62,107,79,0.15);color:var(--ok);}
+
+  /* Pagination */
+  .pagination{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+  .pagination button{
+    background:var(--card);border:1.5px solid var(--line);border-radius:3px;padding:6px 12px;cursor:pointer;color:var(--forest-deep);
+  }
+  .pagination button:disabled{opacity:0.35;cursor:not-allowed;}
+  .pagination button:not(:disabled):hover{border-color:var(--forest);}
+  .pagination .pag-info{color:var(--muted);}
+
+  @media (max-width:640px){
+    .add-grid, .toolbar{flex-direction:column;align-items:stretch;}
+    .add-grid .field, .toolbar .field, input, select{min-width:0;width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="stamp">E.E.<br>NOVA<br>APAR.</div>
+      <div>
+        <h1>Biblioteca Escolar</h1>
+        <p>Escola Estadual Nova Aparecida &middot; Acervo &amp; Empréstimos</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="painel">Painel</button>
+        <button class="tab-btn" data-tab="acervo">Acervo</button>
+        <button class="tab-btn" data-tab="emprestimos">Empréstimos</button>
+        <button class="tab-btn" data-tab="historico">Histórico</button>
+      </div>
+      <div id="auth-box" class="auth-box"></div>
+    </div>
+  </header>
+
+  <div id="loading" class="loading">Abrindo o catálogo…</div>
+
+  <!-- PAINEL -->
+  <div class="panel active" id="panel-painel">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Títulos cadastrados</div>
+        <div class="stat-value" id="stat-titulos">—</div>
+        <div class="stat-sub" id="stat-titulos-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Exemplares no acervo</div>
+        <div class="stat-value" id="stat-exemplares">—</div>
+        <div class="stat-sub" id="stat-exemplares-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emprestados agora</div>
+        <div class="stat-value" id="stat-emprestados">—</div>
+        <div class="stat-sub" id="stat-emprestados-sub"></div>
+      </div>
+      <div class="stat-card stat-alert">
+        <div class="stat-label">Empréstimos atrasados</div>
+        <div class="stat-value" id="stat-atrasados">—</div>
+        <div class="stat-sub" id="stat-atrasados-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACERVO -->
+  <div class="panel" id="panel-acervo">
+    <div id="acervo-admin-note" class="admin-note" style="display:none;">Faça login com a conta autorizada para cadastrar, editar, ativar ou inativar livros. A pesquisa abaixo funciona normalmente sem login.</div>
+    <div class="add-card admin-only" id="card-add-livro">
+      <h3>+ Cadastrar novo livro</h3>
+      <div class="add-grid">
+        <div class="field"><label>Código</label><input id="f-codigo" placeholder="Ex: BIO-014"></div>
+        <div class="field" style="flex:1.4;min-width:180px;"><label>Título</label><input id="f-titulo" placeholder="Título do livro"></div>
+        <div class="field" style="flex:1;min-width:160px;"><label>Autor</label><input id="f-autor" placeholder="Autor"></div>
+        <div class="field"><label>Categoria</label><input id="f-categoria" placeholder="Ex: Romance"></div>
+        <div class="field" style="width:110px;"><label>Quantidade</label><input id="f-quantidade" type="number" min="1" value="1"></div>
+      </div>
+      <div class="add-grid" style="margin-top:10px;">
+        <div class="field"><label>Editora</label><input id="f-editora" placeholder="Ex: Ática"></div>
+        <div class="field" style="width:120px;"><label>Edição</label><input id="f-edicao" placeholder="Ex: 2ª ED."></div>
+        <div class="field" style="width:150px;"><label>Local/Data</label><input id="f-local" placeholder="Ex: SP 2018"></div>
+        <div class="field" style="width:110px;"><label>Nº páginas</label><input id="f-paginas" placeholder="Ex: 120"></div>
+        <div class="field"><label>&nbsp;</label><button class="btn" id="btn-add-livro">Cadastrar</button></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="field" style="flex:1.5;min-width:200px;">
+        <label>Pesquisar</label>
+        <input id="busca-livro" placeholder="Título, autor, categoria ou código">
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="filtro-categoria"><option value="">Todas</option></select>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="filtro-status">
+          <option value="">Todos</option>
+          <option value="ativo">Ativos</option>
+          <option value="inativo">Inativos</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="count-bar" id="contagem-livros"></div>
+    <div id="grid-livros" class="cards-grid"></div>
+  </div>
+
+  <!-- EMPRESTIMOS -->
+  <div class="panel" id="panel-emprestimos">
+    <div id="emprestimo-admin-note" class="admin-note" style="display:none;">Faça login com a conta autorizada para registrar empréstimos, renovações ou devoluções. A pesquisa abaixo funciona normalmente sem login.</div>
+    <div class="add-card admin-only" id="card-add-emprestimo">
+      <h3>+ Registrar empréstimo</h3>
+      <div class="add-grid">
+        <div class="field" style="flex:1.3;min-width:220px;position:relative;">
+          <label>Livro</label>
+          <input id="f-livro-busca" placeholder="Buscar por título, autor, categoria ou código" autocomplete="off">
+          <input type="hidden" id="f-livro-id">
+          <div id="livro-resultados" class="livro-dropdown"></div>
+          <div id="livro-selecionado" class="livro-chip" style="display:none;"></div>
+        </div>
+        <div class="field" style="flex:1;min-width:160px;"><label>Nome do aluno</label><input id="f-aluno-nome" placeholder="Nome completo"></div>
+        <div class="field" style="min-width:150px;"><label>Telefone</label><input id="f-aluno-tel" placeholder="(00) 00000-0000"></div>
+      </div>
+      <div class="add-grid" style="margin-top:10px;">
+        <div class="field" style="min-width:150px;"><label>Turma <span style="text-transform:none;font-weight:400;">(opcional)</span></label><input id="f-aluno-turma" placeholder="Ex: 8º B"></div>
+        <div class="field" style="width:150px;"><label>Prazo de devolução</label>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input id="f-prazo-dias" type="number" min="1" value="7" style="width:70px;">
+            <span style="font-size:12.5px;color:var(--muted);">dias</span>
+          </div>
+        </div>
+        <div class="field"><label>&nbsp;</label><button class="btn" id="btn-add-emprestimo">Registrar</button></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="field" style="flex:1.5;min-width:200px;">
+        <label>Pesquisar</label>
+        <input id="busca-emprestimo" placeholder="Aluno, turma, telefone ou livro">
+      </div>
+      <div class="field">
+        <label>Situação</label>
+        <select id="filtro-emprestimo">
+          <option value="aberto">Em aberto</option>
+          <option value="atrasado">Atrasados</option>
+          <option value="devolvido">Devolvidos</option>
+          <option value="">Todos</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="count-bar" id="contagem-emprestimos"></div>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Livro</th><th>Aluno</th><th>Turma</th><th>Telefone</th><th>Saída</th><th>Previsão</th><th>Devolução</th><th>Situação</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-emprestimos"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pagination" id="pag-emprestimos"></div>
+  </div>
+
+  <!-- HISTORICO -->
+  <div class="panel" id="panel-historico">
+    <div class="toolbar">
+      <div class="field" style="flex:1.5;min-width:200px;">
+        <label>Pesquisar</label>
+        <input id="busca-historico" placeholder="Aluno, turma ou livro">
+      </div>
+      <div class="field">
+        <label>Tipo de evento</label>
+        <select id="filtro-historico-tipo">
+          <option value="">Todos</option>
+          <option value="Empréstimo">Empréstimos</option>
+          <option value="Renovação">Renovações</option>
+          <option value="Devolução">Devoluções</option>
+        </select>
+      </div>
+    </div>
+    <div class="count-bar" id="contagem-historico"></div>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Data/Hora</th><th>Evento</th><th>Livro</th><th>Aluno</th><th>Turma</th><th>Detalhe</th><th>Responsável</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-historico"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pagination" id="pag-historico"></div>
+  </div>
+</div>
+
+<!-- Modal edição de livro -->
+<div class="modal-bg" id="modal-editar">
+  <div class="modal">
+    <h3>Editar livro</h3>
+    <div class="field"><label>Código</label><input id="e-codigo"></div>
+    <div class="field"><label>Título</label><input id="e-titulo"></div>
+    <div class="field"><label>Autor</label><input id="e-autor"></div>
+    <div class="field"><label>Categoria</label><input id="e-categoria"></div>
+    <div class="field"><label>Editora</label><input id="e-editora"></div>
+    <div class="field"><label>Edição</label><input id="e-edicao"></div>
+    <div class="field"><label>Local/Data</label><input id="e-local"></div>
+    <div class="field"><label>Nº páginas</label><input id="e-paginas"></div>
+    <div class="field"><label>Quantidade total</label><input id="e-quantidade" type="number" min="0"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="btn-cancelar-editar">Cancelar</button>
+      <button class="btn" id="btn-salvar-editar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-renovar">
+  <div class="modal">
+    <h3>Renovar empréstimo</h3>
+    <p id="renovar-info" style="font-size:13px;color:var(--muted);margin:-6px 0 14px;"></p>
+    <div class="field"><label>Renovar por mais quantos dias?</label><input id="r-dias" type="number" min="1" value="7"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="btn-cancelar-renovar">Cancelar</button>
+      <button class="btn" id="btn-confirmar-renovar">Renovar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="seed-data" type="application/json">[
+{
+"codigo":"CON-001",
+"autor":"Moacir Scliar",
+"titulo":"A Balada do Falso Messías",
+"edicao":"",
+"editora":"ÁTICA",
+"categoria":"Contos Brasil.",
+"local":"SP 1976",
+"paginas":"85",
+"quantidade":1
+},
+{
+"codigo":"CON-002",
+"autor":"Fernando Fiorese",
+"titulo":"Aconselho-Te Crueldade",
+"edicao":"",
+"editora":"FUNALFA",
+"categoria":"Conto Bras.",
+"local":"JF 2010",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"CON-003",
+"autor":"Katherine Mansfield",
+"titulo":"A Festa e Outros Contos",
+"edicao":"2ª ED",
+"editora":"REVAN",
+"categoria":"Contos Ingleses",
+"local":"RJ 1997",
+"paginas":"143",
+"quantidade":1
+},
+{
+"codigo":"CON-004",
+"autor":"Lia Neiva",
+"titulo":"A Gata do Rio Nilo-Uma História em Seis Estilos",
+"edicao":"2ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Contos Brasil.",
+"local":"RJ 2002",
+"paginas":"130",
+"quantidade":1
+},
+{
+"codigo":"CON-005",
+"autor":"Gabriel de Matos",
+"titulo":"A Geringonça",
+"edicao":"2ª ED.",
+"editora":"VIA LETERA",
+"categoria":"Contos Brasil.",
+"local":"SP 2007",
+"paginas":"88",
+"quantidade":1
+},
+{
+"codigo":"CON-006",
+"autor":"Nélio Spréa e Milton Karam",
+"titulo":"A Grande Roda de Histórias",
+"edicao":"1ª ED.",
+"editora":"PARABOLÉ",
+"categoria":"Contos Brasil.",
+"local":"CUR 2013",
+"paginas":"144",
+"quantidade":1
+},
+{
+"codigo":"CON-007",
+"autor":"Mia Couto",
+"titulo":"A Menina Sem Palavra",
+"edicao":"1ª ED.",
+"editora":"BONIFÁCIO",
+"categoria":"Contos",
+"local":"SP 2018",
+"paginas":"157",
+"quantidade":1
+},
+{
+"codigo":"CON-008",
+"autor":"Natália Borges Polesso",
+"titulo":"Amora",
+"edicao":"1ª ED.",
+"editora":"NÃO-EDITORA",
+"categoria":"Contos",
+"local":"P.A.2015",
+"paginas":"253",
+"quantidade":1
+},
+{
+"codigo":"CON-009",
+"autor":"Vários Autores",
+"titulo":"Antologia de Contos Brasileiros",
+"edicao":"4ª ED.",
+"editora":"EDIOURO",
+"categoria":"Contos Brasil.",
+"local":"SP 2002",
+"paginas":"173",
+"quantidade":1
+},
+{
+"codigo":"CON-010",
+"autor":"Vários Aut:org. Herberto Sales",
+"titulo":"Antologia Escolar de Contos Brasileiros",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos Brasil.",
+"local":"RJ 1997",
+"paginas":"138",
+"quantidade":1
+},
+{
+"codigo":"CON-011",
+"autor":"Vários Aut:org. Herberto Sales",
+"titulo":"Antologias Escolares Edijovem- Os Belos Contos da Eterna Infância",
+"edicao":"17ª ED.",
+"editora":"EDIOURO",
+"categoria":"Contos",
+"local":"RJ ------",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"CON-012",
+"autor":"Marçal Aquino",
+"titulo":"As Fomes de Setembro",
+"edicao":"-- ED.",
+"editora":"ESTAÇÃO LIBER",
+"categoria":"Contos Brasil.",
+"local":"SP 1991",
+"paginas":"86",
+"quantidade":1
+},
+{
+"codigo":"CON-013",
+"autor":"Maksim Górki",
+"titulo":"A Velha Izerguil e Outros Contos",
+"edicao":"1ª ED.",
+"editora":"KALINKKA",
+"categoria":"Conto Russo",
+"local":"SP 2018",
+"paginas":"142",
+"quantidade":1
+},
+{
+"codigo":"CON-014",
+"autor":"Antônio de Alcantara Machado",
+"titulo":"Brás, Bexiga e Barra Funda",
+"edicao":"",
+"editora":"N. ALEXANDRIA",
+"categoria":"Contos Bras.",
+"local":"SP 1995",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"CON-015",
+"autor":"Luis Pimentel",
+"titulo":"Cabelos Mohados",
+"edicao":"1ª ED.",
+"editora":"MEC",
+"categoria":"Contos Brasil.",
+"local":"BRASÍLIA 2006",
+"paginas":"82",
+"quantidade":3
+},
+{
+"codigo":"CON-016",
+"autor":"Ignácio de Loyola Brandão",
+"titulo":"Cadeiras Proibidas",
+"edicao":"12ª ED.",
+"editora":"A PÁGINA",
+"categoria":"Contos Brasil.",
+"local":"CUR 2018",
+"paginas":"140",
+"quantidade":1
+},
+{
+"codigo":"CON-017",
+"autor":"Mikhail M. Zóchtchenko",
+"titulo":"“causos” Russos",
+"edicao":"",
+"editora":"PAULUS",
+"categoria":"Contos Russos",
+"local":"SP 1988",
+"paginas":"106",
+"quantidade":1
+},
+{
+"codigo":"CON-018",
+"autor":"Indigo",
+"titulo":"Cobras em Compota",
+"edicao":"1ª ED.",
+"editora":"MEC",
+"categoria":"Contos Brasil.",
+"local":"BRASÍLIA 2006",
+"paginas":"121",
+"quantidade":5
+},
+{
+"codigo":"CON-019",
+"autor":"Vários Autores:org. Julieta de Godoy Ladeira",
+"titulo":"Contos Brasileiros Contemporâneo",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Contos Brasil.",
+"local":"SP 1991",
+"paginas":"100",
+"quantidade":1
+},
+{
+"codigo":"CON-020",
+"autor":"Vários Autores:org. Julieta de Godoy Ladeira",
+"titulo":"Contos Brasileiros Contemporâneo",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Contos Brasil.",
+"local":"SP 1994",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"CON-021",
+"autor":"Vários Autores",
+"titulo":"Contos Brasileiros I",
+"edicao":"19ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos Brasil.",
+"local":"SP 2006",
+"paginas":"107",
+"quantidade":1
+},
+{
+"codigo":"CON-022",
+"autor":"Maria Lúcia Simões",
+"titulo":"Contos Contidos",
+"edicao":"",
+"editora":"RHJ",
+"categoria":"Contos",
+"local":"BH 1996",
+"paginas":"71",
+"quantidade":1
+},
+{
+"codigo":"CON-023",
+"autor":"Natalia Borges Polesso",
+"titulo":"Contos Contidos",
+"edicao":"1ª ED.",
+"editora":"NÃO.EDITORA",
+"categoria":"Contos Brasil.",
+"local":"SP.2015",
+"paginas":"253",
+"quantidade":1
+},
+{
+"codigo":"CON-024",
+"autor":"Horácio Quiroga",
+"titulo":"Contos da Selva",
+"edicao":"",
+"editora":"ILUMINURAS",
+"categoria":"Contos",
+"local":"SP 2009",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"CON-025",
+"autor":"Jhon O’kuinghttons",
+"titulo":"Contos de Amor, de Loucura e de Morte",
+"edicao":"1ª ED.",
+"editora":"AZOUGUE",
+"categoria":"Contos Uruguaios",
+"local":"RJ 2018",
+"paginas":"221",
+"quantidade":1
+},
+{
+"codigo":"CON-026",
+"autor":"Rogério Andrade Barbosa",
+"titulo":"Contos de Encantos, Sedução e Outros Quebrantos",
+"edicao":"1ª ED.",
+"editora":"BERTRAND BRASIL",
+"categoria":"Contos Brasil..",
+"local":"RJ 2005",
+"paginas":"119",
+"quantidade":1
+},
+{
+"codigo":"CON-027",
+"autor":"Eça de Queiroz",
+"titulo":"Contos de Eça de Queiroz",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos",
+"local":"RJ ----",
+"paginas":"288",
+"quantidade":1
+},
+{
+"codigo":"CON-028",
+"autor":"Liev Tolstói",
+"titulo":"Contos de Sebastopol",
+"edicao":"1ª ED.",
+"editora":"CIRCUITO",
+"categoria":"Contos Russos",
+"local":"RJ 2018",
+"paginas":"184",
+"quantidade":1
+},
+{
+"codigo":"CON-029",
+"autor":"Aldyr Garcia Schlee",
+"titulo":"Contos de Sempre",
+"edicao":"2ª ED.",
+"editora":"MERCADO ABERTO",
+"categoria":"Contos Brasil..",
+"local":"P.A 1988",
+"paginas":"88",
+"quantidade":1
+},
+{
+"codigo":"CON-030",
+"autor":"Samuel Rawet",
+"titulo":"Contos do Imigrante",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos Brasil.",
+"local":"RJ",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"CON-031",
+"autor":"Charles Perrault",
+"titulo":"Contos e Fábulas",
+"edicao":"",
+"editora":"ILUMINÁRAS",
+"categoria":"Contos",
+"local":"SP 2007",
+"paginas":"221",
+"quantidade":1
+},
+{
+"codigo":"CON-032",
+"autor":"Vários Autores",
+"titulo":"Contos Escolhidos (amarelo)",
+"edicao":"",
+"editora":"TRÊS",
+"categoria":"Contos Lit.univ.",
+"local":"SP 1976",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"CON-033",
+"autor":"Vários Autores",
+"titulo":"Contos Escolhidos (branco)",
+"edicao":"",
+"editora":"TRÊS",
+"categoria":"Contos Lit.univ.",
+"local":"SP 1976",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"CON-034",
+"autor":"Guy Maupassant",
+"titulo":"Contos Fantásticos",
+"edicao":"",
+"editora":"LePM POCKET",
+"categoria":"Contos Franceses",
+"local":"P.A 1997",
+"paginas":"142",
+"quantidade":1
+},
+{
+"codigo":"CON-035",
+"autor":"Guto Lins",
+"titulo":"Contos Mínimos",
+"edicao":"1ª ED.",
+"editora":"SIGNO",
+"categoria":"Contos Brasil.",
+"local":"BH 2018",
+"paginas":"72",
+"quantidade":1
+},
+{
+"codigo":"CON-036",
+"autor":"Heloísa Seixas",
+"titulo":"Contos Mínimos",
+"edicao":"2ª ED.",
+"editora":"BEST SELLER",
+"categoria":"Contos Brasil.",
+"local":"RJ 2006",
+"paginas":"126",
+"quantidade":1
+},
+{
+"codigo":"CON-037",
+"autor":"Luis Câmara Cascudo",
+"titulo":"Contos Tradicionais do Brasil para Jovens",
+"edicao":"3ª ED.",
+"editora":"BOA VIAGEM",
+"categoria":"Contos Brasil.",
+"local":"BH 2018",
+"paginas":"150",
+"quantidade":1
+},
+{
+"codigo":"CON-038",
+"autor":"Vários Autores-Or. Djalma Cavalcante",
+"titulo":"Cq – Contos em Quadrinhos",
+"edicao":"",
+"editora":"MUSA",
+"categoria":"Contos Brasil.",
+"local":"J.FORA 2006",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"CON-039",
+"autor":"Vários Autores – Org. Heloisa Pietro",
+"titulo":"De Primeira Viagem",
+"edicao":"2ª ED.",
+"editora":"CIA DAS LETRAS",
+"categoria":"Contos",
+"local":"SP 2006",
+"paginas":"84",
+"quantidade":1
+},
+{
+"codigo":"CON-040",
+"autor":"Julieta de Godoy Ladeira",
+"titulo":"Dia de Matar o Patrão",
+"edicao":"",
+"editora":"SUMMUS",
+"categoria":"Contos Bras.",
+"local":"SP 1978",
+"paginas":"132",
+"quantidade":1
+},
+{
+"codigo":"CON-041",
+"autor":"Gabriel Garcial Marquez",
+"titulo":"Doze Contos Peregrinos",
+"edicao":"29ª ED.",
+"editora":"RECORD",
+"categoria":"Contos Colombianos",
+"local":"RJ 2018",
+"paginas":"256",
+"quantidade":7
+},
+{
+"codigo":"CON-042",
+"autor":"Chico Anísio",
+"titulo":"É Mentira Terta?",
+"edicao":"",
+"editora":"JOSE OLYMPIO",
+"categoria":"Contos Bras.",
+"local":"RJ 1973",
+"paginas":"144",
+"quantidade":1
+},
+{
+"codigo":"CON-043",
+"autor":"Vários Aut./org. Maria José Silveira",
+"titulo":"Entre Rios",
+"edicao":"2ª ED.",
+"editora":"FTD",
+"categoria":"Contos",
+"local":"SP 2018",
+"paginas":"",
+"quantidade":9
+},
+{
+"codigo":"CON-044",
+"autor":"Bruno Palma e Silva",
+"titulo":"Essas Pequenas Ocasiões Que nos Fazem Quem Somos",
+"edicao":"",
+"editora":"HUM.",
+"categoria":"Contos",
+"local":"CUR. 2018",
+"paginas":"104",
+"quantidade":1
+},
+{
+"codigo":"CON-045",
+"autor":"Vários Autores-Trad. Camila Melo",
+"titulo":"Formaturas Infernais",
+"edicao":"2ª ED.",
+"editora":"RECORD",
+"categoria":"Conto Amer.",
+"local":"RJ 2009",
+"paginas":"318",
+"quantidade":1
+},
+{
+"codigo":"CON-046",
+"autor":"Gustave Flaubert",
+"titulo":"Gothica: Contos Juvenis",
+"edicao":"2ª ED.",
+"editora":"BERLENDIS E VERTECCHIA",
+"categoria":"Contos",
+"local":"SP 2006",
+"paginas":"126",
+"quantidade":1
+},
+{
+"codigo":"CON-047",
+"autor":"Vários Autores",
+"titulo":"Histórias de Bichos",
+"edicao":"",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 2013",
+"paginas":"136",
+"quantidade":1
+},
+{
+"codigo":"CON-048",
+"autor":"Luiz Vilela",
+"titulo":"Histórias de Família",
+"edicao":"",
+"editora":"NOVA ALEXANDRIA",
+"categoria":"Contos",
+"local":"SP 2001",
+"paginas":"125",
+"quantidade":1
+},
+{
+"codigo":"CON-049",
+"autor":"Vários Autores",
+"titulo":"Histórias de Grandeza e de Miséria",
+"edicao":"",
+"editora":"LePM",
+"categoria":"Contos",
+"local":"P.AL 2003",
+"paginas":"56",
+"quantidade":1
+},
+{
+"codigo":"CON-050",
+"autor":"Mauritonio Meira",
+"titulo":"Histórias do Povo Brasileiro",
+"edicao":"",
+"editora":"GRADUS",
+"categoria":"Contos",
+"local":"RJ 1991",
+"paginas":"195",
+"quantidade":1
+},
+{
+"codigo":"CON-051",
+"autor":"Geni Guimarães",
+"titulo":"Leite do Peito",
+"edicao":"3ª ED.",
+"editora":"MAZZA",
+"categoria":"Contos",
+"local":"BH 2001",
+"paginas":"104",
+"quantidade":1
+},
+{
+"codigo":"CON-052",
+"autor":"Vários Autores-Org.marisa Lajolo",
+"titulo":"Leitura da Vida (eja)",
+"edicao":"1ª ED.",
+"editora":"MODERNA",
+"categoria":"Contos",
+"local":"SP 2003",
+"paginas":"56",
+"quantidade":1
+},
+{
+"codigo":"CON-053",
+"autor":"Luís da Camâra Cascudo",
+"titulo":"Lendas Brasileiras para Jovens",
+"edicao":"3ª ED.",
+"editora":"MGE",
+"categoria":"Contos Brasil.",
+"local":"PAL 2018",
+"paginas":"144",
+"quantidade":3
+},
+{
+"codigo":"CON-054",
+"autor":"Vários Autores",
+"titulo":"Livro dos Dragões",
+"edicao":"",
+"editora":"HEDRA",
+"categoria":"Contos",
+"local":"SP 2012",
+"paginas":"120",
+"quantidade":1
+},
+{
+"codigo":"CON-055",
+"autor":"Moacyr Scliar",
+"titulo":"Melhores Contos",
+"edicao":"6ª ED.",
+"editora":"GLOBAL",
+"categoria":"Contos Bras.",
+"local":"SP 2003",
+"paginas":"270",
+"quantidade":1
+},
+{
+"codigo":"CON-056",
+"autor":"Jorge Furtado",
+"titulo":"Meu Tio Matou Um Cara e Outras Histórias",
+"edicao":"",
+"editora":"LePM POCKET",
+"categoria":"Contos",
+"local":"P. AL 2007",
+"paginas":"224",
+"quantidade":1
+},
+{
+"codigo":"CON-057",
+"autor":"Voltaire",
+"titulo":"Micromegas e Outros Contos",
+"edicao":"",
+"editora":"",
+"categoria":"Não Informada",
+"local":"",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"CON-058",
+"autor":"Textos Domínio Público-Org.alexandre Carvalho",
+"titulo":"Minhas Primeiras Histórias – Mitológicas Grecas",
+"edicao":"1ª ED.",
+"editora":"PAULUS",
+"categoria":"Contos",
+"local":"SP 2010",
+"paginas":"31",
+"quantidade":1
+},
+{
+"codigo":"CON-059",
+"autor":"Vinte e Nove Autores",
+"titulo":"Mulheres",
+"edicao":"",
+"editora":"MAZA",
+"categoria":"Contos Bras.",
+"local":"BH 2014",
+"paginas":"232",
+"quantidade":1
+},
+{
+"codigo":"CON-060",
+"autor":"Yaguarê Yamâ e Outros Contadores de Histórias",
+"titulo":"Murugawa-Mitos, Contos e Fábulas do Povo Maraguá",
+"edicao":"1ª ED.",
+"editora":"MARTINSFONTES",
+"categoria":"Contos Indígenas Bras.",
+"local":"SP 2009",
+"paginas":"106",
+"quantidade":1
+},
+{
+"codigo":"CON-061",
+"autor":"Cuti",
+"titulo":"Negros em Contos",
+"edicao":"2ª ED.",
+"editora":"MAZA",
+"categoria":"Contos Bras.",
+"local":"BH 1996",
+"paginas":"141",
+"quantidade":1
+},
+{
+"codigo":"CON-062",
+"autor":"Alexander Puchkin",
+"titulo":"Noites Egípcias e Outros Contos",
+"edicao":"1ª ED.",
+"editora":"KALINKA",
+"categoria":"Contos",
+"local":"SP 2018",
+"paginas":"140",
+"quantidade":1
+},
+{
+"codigo":"CON-063",
+"autor":"Antônio de Alcantara Machado",
+"titulo":"Novelas Paulistanas",
+"edicao":"7ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Conto0s Bras.",
+"local":"RJ 1981",
+"paginas":"203",
+"quantidade":1
+},
+{
+"codigo":"CON-064",
+"autor":"Moacyr Scliar",
+"titulo":"O Carnaval dos Animais",
+"edicao":"2ª ED.",
+"editora":"EDIOURO",
+"categoria":"Contos Bras.",
+"local":"SP 2002",
+"paginas":"101",
+"quantidade":1
+},
+{
+"codigo":"CON-065",
+"autor":"Marcos Rey",
+"titulo":"O Cão da Meia Noite",
+"edicao":"3ª ED.",
+"editora":"ATICA",
+"categoria":"Contos",
+"local":"SP 1998",
+"paginas":"175",
+"quantidade":1
+},
+{
+"codigo":"CON-066",
+"autor":"Renato Sampaio",
+"titulo":"O Elevador",
+"edicao":"",
+"editora":"COMUNICAÇÃO",
+"categoria":"Contos",
+"local":"BH -----",
+"paginas":"77",
+"quantidade":1
+},
+{
+"codigo":"CON-067",
+"autor":"Vários Autores – Org.alciene Ribeiro Leite",
+"titulo":"O Fino do Conto",
+"edicao":"",
+"editora":"RHJ",
+"categoria":"Contos Bras.",
+"local":"BH 1989",
+"paginas":"94",
+"quantidade":1
+},
+{
+"codigo":"CON-068",
+"autor":"Reynaldo Valinho Alvarez",
+"titulo":"O Grande Guru",
+"edicao":"",
+"editora":"AGIR",
+"categoria":"Contos",
+"local":"RJ 1986",
+"paginas":"122",
+"quantidade":1
+},
+{
+"codigo":"CON-069",
+"autor":"Vários Autores – Org. Marcos Rey",
+"titulo":"O Inesperado",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos Bras.",
+"local":"RJ 1994",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"CON-070",
+"autor":"F. Dostoiévski",
+"titulo":"O Ladrão Honesto e Outros Contos",
+"edicao":"1ª ED.",
+"editora":"KALINKA",
+"categoria":"Contos Russos",
+"local":"SP 2018",
+"paginas":"158",
+"quantidade":1
+},
+{
+"codigo":"CON-071",
+"autor":"Celso Gutfreind",
+"titulo":"O Nome da Fera",
+"edicao":"",
+"editora":"DIMENSÃO",
+"categoria":"Contos Bras.",
+"local":"BH 2011",
+"paginas":"119",
+"quantidade":1
+},
+{
+"codigo":"CON-072",
+"autor":"Chico Anísio",
+"titulo":"O Telefone Amarelo",
+"edicao":"2ª ED.",
+"editora":"ROCCO",
+"categoria":"Contos",
+"local":"RJ 1979",
+"paginas":"161",
+"quantidade":1
+},
+{
+"codigo":"CON-073",
+"autor":"Luiz Vilela",
+"titulo":"O Violino e Outros Contos",
+"edicao":"3ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 1995",
+"paginas":"85",
+"quantidade":2
+},
+{
+"codigo":"CON-074",
+"autor":"José J. Veiga",
+"titulo":"Os Cavalinhos de Platiplanto",
+"edicao":"14ª ED.",
+"editora":"DIFUSÃO EDITORIAL",
+"categoria":"Contos",
+"local":"SP 1983",
+"paginas":"122",
+"quantidade":1
+},
+{
+"codigo":"CON-075",
+"autor":"Luiz Fernando Emediato",
+"titulo":"Os Lábios Úmidos de Marilyn Monroe",
+"edicao":"",
+"editora":"ATICA",
+"categoria":"Contos Bras.",
+"local":"SP 1978",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"CON-076",
+"autor":"Malba Tahan",
+"titulo":"Os Melhores Contos",
+"edicao":"12ª ED.",
+"editora":"RECORD",
+"categoria":"Contos Bras.",
+"local":"RJ 1997",
+"paginas":"140",
+"quantidade":1
+},
+{
+"codigo":"CON-077",
+"autor":"João Etienne Filho",
+"titulo":"Os Tristes Contos",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos",
+"local":"BH 1971",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"CON-078",
+"autor":"Jorge Fernndo dos Santos",
+"titulo":"Palmeira Seca",
+"edicao":"3ª ED.",
+"editora":"DEL REY",
+"categoria":"Contos Bras.",
+"local":"BH 1995",
+"paginas":"140",
+"quantidade":1
+},
+{
+"codigo":"CON-079",
+"autor":"Vários Autores-Org.josé Paulo Paes",
+"titulo":"Para Gostar de Ler",
+"edicao":"2ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos Univ.",
+"local":"SP 1990",
+"paginas":"103",
+"quantidade":1
+},
+{
+"codigo":"CON-080",
+"autor":"Vários Autores-Org.josé Paulo Paes",
+"titulo":"Para Gostar de Ler",
+"edicao":"4ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos Univ.",
+"local":"SP 1993",
+"paginas":"103",
+"quantidade":1
+},
+{
+"codigo":"CON-081",
+"autor":"Herbert Hette",
+"titulo":"Pétalas de Crepom",
+"edicao":"",
+"editora":"",
+"categoria":"Contos",
+"local":"NLIMA",
+"paginas":"92",
+"quantidade":1
+},
+{
+"codigo":"CON-082",
+"autor":"Reni Tiago Pinheiro Barbosa",
+"titulo":"Pontos para Tecer Um Conto",
+"edicao":"1ª ED.",
+"editora":"LÊ",
+"categoria":"Arte de Contar Hist.",
+"local":"BH 1997",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"CON-083",
+"autor":"Carmen Gil",
+"titulo":"Por Que Os Gemeos São Tão Iguais?",
+"edicao":"",
+"editora":"GIRAFINHA",
+"categoria":"Contos",
+"local":"SP 2006",
+"paginas":"32",
+"quantidade":1
+},
+{
+"codigo":"CON-084",
+"autor":"Carmen Gil",
+"titulo":"Por Que Somos de Cores Diferentes?",
+"edicao":"",
+"editora":"GIRAFINHA",
+"categoria":"Contos",
+"local":"SP 2006",
+"paginas":"32",
+"quantidade":1
+},
+{
+"codigo":"CON-085",
+"autor":"Vários Autores-Org.miguel Conde",
+"titulo":"Quarteto Mágico",
+"edicao":"1ª ED.",
+"editora":"AUTÊNTICA",
+"categoria":"Contos Bras.",
+"local":"BH 2018",
+"paginas":"173",
+"quantidade":1
+},
+{
+"codigo":"CON-086",
+"autor":"Tolstói, Gorki, Púchkin, Tchêkhov",
+"titulo":"Salada Russa",
+"edicao":"3ª ED.",
+"editora":"PAULUS",
+"categoria":"Contos Russos",
+"local":"SP 1988",
+"paginas":"159",
+"quantidade":1
+},
+{
+"codigo":"CON-087",
+"autor":"Vários Autores",
+"titulo":"Segredos do Amor",
+"edicao":"",
+"editora":"O LIVREIRO",
+"categoria":"Contos Realistas",
+"local":"SP 1961",
+"paginas":"189",
+"quantidade":1
+},
+{
+"codigo":"CON-088",
+"autor":"Nilson Rocha",
+"titulo":"Segredo",
+"edicao":"1ª ED.",
+"editora":"LITTERA MACIEL",
+"categoria":"Contos",
+"local":"BH 1987",
+"paginas":"111",
+"quantidade":1
+},
+{
+"codigo":"CON-089",
+"autor":"Vários Autores-Org. Marcos Rey",
+"titulo":"Seis em Ponto",
+"edicao":"2ª ED.",
+"editora":"EDIOURO",
+"categoria":"Contos Bras.",
+"local":"RJ 1994",
+"paginas":"159",
+"quantidade":1
+},
+{
+"codigo":"CON-090",
+"autor":"Tatiana Belinky",
+"titulo":"Sete Contos Russos",
+"edicao":"",
+"editora":"CIA DAS LETRINHAS",
+"categoria":"Contos",
+"local":"SP 1995",
+"paginas":"55",
+"quantidade":1
+},
+{
+"codigo":"CON-091",
+"autor":"Vários Autores-Org. Elias José",
+"titulo":"Setecentos Seten Cantos",
+"edicao":"2ª ED. VOL. 04",
+"editora":"FTD",
+"categoria":"Contos Bras.",
+"local":"SP 1989",
+"paginas":"109",
+"quantidade":2
+},
+{
+"codigo":"CON-092",
+"autor":"Vários Autores-Org. Elias José",
+"titulo":"Setecentos Seten Cantos",
+"edicao":"VOL. 02",
+"editora":"FTD",
+"categoria":"Contos Bras.",
+"local":"SP 1986",
+"paginas":"87",
+"quantidade":1
+},
+{
+"codigo":"CON-093",
+"autor":"Gilberto Mansur",
+"titulo":"Tremor de Terra",
+"edicao":"6ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos Bras.",
+"local":"SP 1978",
+"paginas":"123",
+"quantidade":1
+},
+{
+"codigo":"POE-001",
+"autor":"Luciana V.p. de Mendonça",
+"titulo":"Abraão e As Frutas",
+"edicao":"",
+"editora":"MEC",
+"categoria":"Poesias",
+"local":"BRAS. 2006",
+"paginas":"81",
+"quantidade":1
+},
+{
+"codigo":"POE-002",
+"autor":"Zeneida Lima",
+"titulo":"A Estranha",
+"edicao":"",
+"editora":"OF.MIN.DE EDIÇÕES",
+"categoria":"Poesia",
+"local":"BH 1992",
+"paginas":"63",
+"quantidade":1
+},
+{
+"codigo":"POE-003",
+"autor":"Abel F. dos Reis e Waldete M. Castro",
+"titulo":"Algumas Palavras",
+"edicao":"",
+"editora":"GRAPHILIVROS",
+"categoria":"Poesias",
+"local":"",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"POE-004",
+"autor":"Elias José",
+"titulo":"Alice no País da Poesia",
+"edicao":"1ª ED.",
+"editora":"PEIRÓPOLIS",
+"categoria":"Poesia",
+"local":"SP 2009",
+"paginas":"53",
+"quantidade":1
+},
+{
+"codigo":"POE-005",
+"autor":"Org: Vilma Feliciana Fonseca de Oliveira Santos",
+"titulo":"A Natureza Cantada",
+"edicao":"",
+"editora":"ORG.",
+"categoria":"Poesias",
+"local":"UNAÍ 2007",
+"paginas":"95",
+"quantidade":1
+},
+{
+"codigo":"POE-006",
+"autor":"Alisson Lobo/carlos Alberto Fonseca/edson Lopes /ever Salgado",
+"titulo":"Antologia Poética",
+"edicao":"",
+"editora":"O LUTADOR",
+"categoria":"Poesias",
+"local":"",
+"paginas":"53",
+"quantidade":1
+},
+{
+"codigo":"POE-007",
+"autor":"Moisés do Socorro de Oliveira",
+"titulo":"A Poesia do Direito",
+"edicao":"",
+"editora":"LEMI",
+"categoria":"Poesias",
+"local":"BH 1979",
+"paginas":"86",
+"quantidade":2
+},
+{
+"codigo":"POE-008",
+"autor":"Euler Cruz",
+"titulo":"Ave Terra",
+"edicao":"",
+"editora":"MAZZA",
+"categoria":"Poesias",
+"local":"BH 2000",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"POE-009",
+"autor":"Elizabeth Renno",
+"titulo":"A Aventura Poética de Lêdo Ivo",
+"edicao":"",
+"editora":"ABL",
+"categoria":"Poesias",
+"local":"RJ 1988",
+"paginas":"147",
+"quantidade":1
+},
+{
+"codigo":"POE-010",
+"autor":"Antônio Rosa",
+"titulo":"Banzo",
+"edicao":"",
+"editora":"ARMAZÉM DE IDÉIAS",
+"categoria":"Poesia",
+"local":"BH 2001",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"POE-011",
+"autor":"Manuel Bandeira/org. Elias Jose",
+"titulo":"Berimbau e Outros Poemas",
+"edicao":"2ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia",
+"local":"SP 2013",
+"paginas":"60",
+"quantidade":1
+},
+{
+"codigo":"POE-012",
+"autor":"Eucanaã Ferraz",
+"titulo":"Bicho de Sete Cabeças e Outros Seres Fantásticos",
+"edicao":"",
+"editora":"BOA VIAGEM",
+"categoria":"Poesias",
+"local":"BH 2010",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"POE-013",
+"autor":"Romilton Faria",
+"titulo":"Cante Ainda Que Baixo",
+"edicao":"",
+"editora":"GRAF-SET",
+"categoria":"Poesias",
+"local":"JFORA",
+"paginas":"70",
+"quantidade":1
+},
+{
+"codigo":"POE-014",
+"autor":"Gabriel Bicalho",
+"titulo":"Caravela",
+"edicao":"1ª ED.",
+"editora":"MEC",
+"categoria":"Poesias",
+"local":"BRASILIA 2006",
+"paginas":"72",
+"quantidade":4
+},
+{
+"codigo":"POE-015",
+"autor":"Pablo Neruda",
+"titulo":"Cem Sonetos de Amor",
+"edicao":"",
+"editora":"LePM POCKET",
+"categoria":"Poesias",
+"local":"P.AL.2007",
+"paginas":"116",
+"quantidade":1
+},
+{
+"codigo":"POE-016",
+"autor":"Org:ana Caetano/josé Mª Cançado/marcelo Dolabela",
+"titulo":"50 Poemas Anos 60",
+"edicao":"",
+"editora":"TEMPORADA DE POESIA",
+"categoria":"Poesias",
+"local":"BH 1994",
+"paginas":"84",
+"quantidade":1
+},
+{
+"codigo":"POE-017",
+"autor":"Org: Frederico Barbosa",
+"titulo":"Clássicos da Poesia Brasileira",
+"edicao":"",
+"editora":"KLICK",
+"categoria":"Poesias",
+"local":"SP ----",
+"paginas":"192",
+"quantidade":1
+},
+{
+"codigo":"POE-018",
+"autor":"Raul Bopp",
+"titulo":"Cobra Norato",
+"edicao":"31ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Poesias",
+"local":"RJ 2018",
+"paginas":"93",
+"quantidade":1
+},
+{
+"codigo":"POE-019",
+"autor":"Roseana Murray",
+"titulo":"Corpo e Amor",
+"edicao":"1ª ED.",
+"editora":"GRADIVA",
+"categoria":"Poesias",
+"local":"RJ 2018",
+"paginas":"60",
+"quantidade":1
+},
+{
+"codigo":"POE-020",
+"autor":"Gregório de Matos",
+"titulo":"Desenganos da Vida Humana e Outros Poemas",
+"edicao":"1ª ED.",
+"editora":"EDLAB",
+"categoria":"Poesias",
+"local":"SP 2018",
+"paginas":"100",
+"quantidade":1
+},
+{
+"codigo":"POE-021",
+"autor":"Anna Lúcia Leão Costa",
+"titulo":"Despetalar",
+"edicao":"",
+"editora":"BCD IMPRESSOS",
+"categoria":"Poesias",
+"local":"CAETÉ 2012",
+"paginas":"170",
+"quantidade":1
+},
+{
+"codigo":"POE-022",
+"autor":"Paulo de Souza Pacheco",
+"titulo":"Devaneios",
+"edicao":"",
+"editora":"SIDIL",
+"categoria":"Poesias",
+"local":"DIVIN.1993",
+"paginas":"118",
+"quantidade":1
+},
+{
+"codigo":"POE-023",
+"autor":"Anizio Vianna",
+"titulo":"Dublê de Anjo",
+"edicao":"",
+"editora":"MAZZA",
+"categoria":"Poesias",
+"local":"BH 1996",
+"paginas":"52",
+"quantidade":1
+},
+{
+"codigo":"POE-024",
+"autor":"Vera Lúcia de Oliveira",
+"titulo":"Entre As Junturas dos Ossos",
+"edicao":"1ª ED.",
+"editora":"MEC",
+"categoria":"Poesias",
+"local":"BRASILIA 2006",
+"paginas":"69",
+"quantidade":1
+},
+{
+"codigo":"POE-025",
+"autor":"Augusto dos Anjos",
+"titulo":"Eu e Outras Poesias",
+"edicao":"1ª ED.",
+"editora":"CIVILIZAÇÃO ITATIAIA",
+"categoria":"Poesias",
+"local":"RJ 1982",
+"paginas":"143",
+"quantidade":1
+},
+{
+"codigo":"POE-026",
+"autor":"Ledusha",
+"titulo":"Finesse e Fissura",
+"edicao":"",
+"editora":"BRASILIENSE",
+"categoria":"Poesias",
+"local":"SP 1984",
+"paginas":"105",
+"quantidade":1
+},
+{
+"codigo":"POE-027",
+"autor":"Alvares de Azevedo- Org.célia A. N. Passoni",
+"titulo":"Lira dos Vinte Anos",
+"edicao":"2ª ED.",
+"editora":"NÚCLEO",
+"categoria":"Poesias",
+"local":"SP 1996",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"POE-028",
+"autor":"Camões-Org.célia A. N. Passoni",
+"titulo":"Lírica de Camões",
+"edicao":"2ª ED.",
+"editora":"NÚCLEO",
+"categoria":"Poesias",
+"local":"SP 1997",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"POE-029",
+"autor":"Elza Beatriz Von Dollinger de Araujo",
+"titulo":"Líquido e Certo",
+"edicao":"",
+"editora":"VIGÍLIA",
+"categoria":"Poesias",
+"local":"BH 1983",
+"paginas":"60",
+"quantidade":1
+},
+{
+"codigo":"POE-030",
+"autor":"Vários Alunos: Cidade dos Meninos/lar dos Meninos",
+"titulo":"Livro do Ano",
+"edicao":"27ª ED.",
+"editora":"DIVINA PROVIDÊNCIA",
+"categoria":"Prosa e Poesia",
+"local":"BH 2018",
+"paginas":"402",
+"quantidade":1
+},
+{
+"codigo":"POE-031",
+"autor":"William Machado",
+"titulo":"Macuia",
+"edicao":"",
+"editora":"GAMA ARTES",
+"categoria":"Poesias",
+"local":"BH -----",
+"paginas":"51",
+"quantidade":1
+},
+{
+"codigo":"POE-032",
+"autor":"Jorge Miguel",
+"titulo":"Manuel Bandeira (coleção Engenho e Arte)",
+"edicao":"",
+"editora":"HARBRA",
+"categoria":"Poesias",
+"local":"BH -----",
+"paginas":"81",
+"quantidade":1
+},
+{
+"codigo":"POE-033",
+"autor":"Tomás Antônio Gonzaga-Introd. M.cavalcanti Proença",
+"titulo":"Marília de Dirceu",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Poesia Bras.",
+"local":"RJ 2001",
+"paginas":"205",
+"quantidade":1
+},
+{
+"codigo":"POE-034",
+"autor":"Tomás Antônio Gonzaga-Introd. M.cavalcanti Proença",
+"titulo":"Marília de Dirceu",
+"edicao":"30ª ED.",
+"editora":"EDIOURO",
+"categoria":"Poesia Bras.",
+"local":"RJ 2001",
+"paginas":"122",
+"quantidade":1
+},
+{
+"codigo":"POE-035",
+"autor":"Cassiano Ricardo",
+"titulo":"Martim Cererê",
+"edicao":"12ª ED.",
+"editora":"JOSÉ PLYMPIO",
+"categoria":"Poesia",
+"local":"RJ 1972",
+"paginas":"189",
+"quantidade":1
+},
+{
+"codigo":"POE-036",
+"autor":"Fernando Pessoa – Org. Teresa Rita Lopes",
+"titulo":"Melhores Poemas",
+"edicao":"9ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia Port.",
+"local":"SP 1997",
+"paginas":"171",
+"quantidade":1
+},
+{
+"codigo":"POE-037",
+"autor":"Luis de Camões-Org. Leodegário A. Azevedo Filho",
+"titulo":"Melhores Poemas",
+"edicao":"2ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia Port.",
+"local":"SP 1994",
+"paginas":"184",
+"quantidade":1
+},
+{
+"codigo":"POE-038",
+"autor":"Paulo Leminski- Org.fred Goes/alvaro Martins",
+"titulo":"Melhores Poemas",
+"edicao":"",
+"editora":"GAIA",
+"categoria":"Poesia",
+"local":"SP 2006",
+"paginas":"213",
+"quantidade":1
+},
+{
+"codigo":"POE-039",
+"autor":"Israel Mendes",
+"titulo":"Menino Perplexo",
+"edicao":"",
+"editora":"DUBLINENSE",
+"categoria":"Poesia",
+"local":"P.AL.2010",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"POE-040",
+"autor":"José Severiano de Rezende",
+"titulo":"Mistérios",
+"edicao":"",
+"editora":"IMPRENSA UFMG",
+"categoria":"Poesia",
+"local":"BH 1971",
+"paginas":"219",
+"quantidade":1
+},
+{
+"codigo":"POE-041",
+"autor":"Flávia Torres Caldas",
+"titulo":"Mosaicos",
+"edicao":"",
+"editora":"ARTE QUINTAL",
+"categoria":"Poesia",
+"local":"BH 1988",
+"paginas":"50",
+"quantidade":1
+},
+{
+"codigo":"POE-042",
+"autor":"Vários Autores",
+"titulo":"Na Boca da Gente",
+"edicao":"1ª ED.",
+"editora":"LePM",
+"categoria":"Poesia",
+"local":"P.AL.2003",
+"paginas":"48",
+"quantidade":1
+},
+{
+"codigo":"POE-043",
+"autor":"Fernando Pessoa-Org. Carlos Felipe Moisés",
+"titulo":"O Almirante Louco",
+"edicao":"1ª ED.",
+"editora":"COMBOIO CORDA",
+"categoria":"Poesia",
+"local":"SP 2007",
+"paginas":"63",
+"quantidade":1
+},
+{
+"codigo":"POE-044",
+"autor":"Mauro Faustino",
+"titulo":"O Homem e Sua Hora e Outros Poemas",
+"edicao":"",
+"editora":"",
+"categoria":"Poesia",
+"local":"",
+"paginas":"225",
+"quantidade":1
+},
+{
+"codigo":"POE-045",
+"autor":"Vários Autores",
+"titulo":"O Melhor da Poesia Brasileira",
+"edicao":"2ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Poesia",
+"local":"RJ 1997",
+"paginas":"94",
+"quantidade":1
+},
+{
+"codigo":"POE-046",
+"autor":"José Paulo Paes",
+"titulo":"O Melhor Poeta da Minha Rua",
+"edicao":"1ª ED.",
+"editora":"MAXPRINT",
+"categoria":"Poesia",
+"local":"S.J.DOS CAMPOS 2018",
+"paginas":"111",
+"quantidade":1
+},
+{
+"codigo":"POE-047",
+"autor":"Sérgio Capparelli",
+"titulo":"O Rapaz do Metrô",
+"edicao":"1ª ED.",
+"editora":"BEST SELLER",
+"categoria":"Poesia",
+"local":"RJ 2018",
+"paginas":"149",
+"quantidade":1
+},
+{
+"codigo":"POE-048",
+"autor":"Lucília Panisset",
+"titulo":"O Renascer do Sonho",
+"edicao":"1ª ED.",
+"editora":"ÉPHATA",
+"categoria":"Poesia",
+"local":"BH 1999",
+"paginas":"134",
+"quantidade":1
+},
+{
+"codigo":"POE-049",
+"autor":"Yeda Prates Bernis",
+"titulo":"O Rosto do Silêncio",
+"edicao":"2ª ED.",
+"editora":"CUATIARA",
+"categoria":"Poesia",
+"local":"BH 1992",
+"paginas":"42",
+"quantidade":1
+},
+{
+"codigo":"POE-050",
+"autor":"R. O. Dantas",
+"titulo":"Otimismo em Gotas",
+"edicao":"8ª ED.",
+"editora":"OTIMISTAS",
+"categoria":"Poesia",
+"local":"SP 1977",
+"paginas":"222",
+"quantidade":1
+},
+{
+"codigo":"POE-051",
+"autor":"Ricardo Aleixo",
+"titulo":"Palavrear",
+"edicao":"1ª ED.",
+"editora":"TODAVIA",
+"categoria":"Poesia",
+"local":"SP 2018",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"POE-052",
+"autor":"Zeka de Queiros",
+"titulo":"Paisagem",
+"edicao":"1ª ED.",
+"editora":"CENTER",
+"categoria":"Poesia",
+"local":"BRAS.1987",
+"paginas":"98",
+"quantidade":1
+},
+{
+"codigo":"POE-053",
+"autor":"José Lino Grunewald",
+"titulo":"Pedras de Toque",
+"edicao":"",
+"editora":"NOVA FRONT.",
+"categoria":"Poesia",
+"local":"RJ 1996",
+"paginas":"182",
+"quantidade":1
+},
+{
+"codigo":"POE-054",
+"autor":"Yeda Prates Bernis",
+"titulo":"Pêndula",
+"edicao":"2ª ED.",
+"editora":"ITATIAIA",
+"categoria":"Poesia",
+"local":"BH 1986",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"POE-055",
+"autor":"Neusa Sorrenti",
+"titulo":"Pintando Poesia",
+"edicao":"",
+"editora":"AUTÊNTICA",
+"categoria":"Poesia",
+"local":"BH 2008",
+"paginas":"40",
+"quantidade":1
+},
+{
+"codigo":"POE-056",
+"autor":"Ferreira Gullar",
+"titulo":"Poema Sujo",
+"edicao":"1ª ED.",
+"editora":"MEDIA FASHION",
+"categoria":"Poesia",
+"local":"RJ 2008",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"POE-057",
+"autor":"Alvares de Azevedo-Org. Maria José Trindade Negrão",
+"titulo":"Poesia (nossos Clássicos)",
+"edicao":"3ª ED.",
+"editora":"AGIR",
+"categoria":"Poesia",
+"local":"RJ 1969",
+"paginas":"122",
+"quantidade":1
+},
+{
+"codigo":"POE-058",
+"autor":"Gonçalves Dias –org Manuel Bandeira",
+"titulo":"Poesia (nossos Clássicos)",
+"edicao":"13ª ED.",
+"editora":"AGIR",
+"categoria":"Poesia",
+"local":"RJ 1989",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"POE-059",
+"autor":"José de Alencar – Org. Eduardo Portela",
+"titulo":"Poesia (nossos Clássicos)",
+"edicao":"2ª ED.",
+"editora":"AGIR",
+"categoria":"Poesia",
+"local":"RJ 1966",
+"paginas":"69",
+"quantidade":1
+},
+{
+"codigo":"POE-060",
+"autor":"Sylvia Orthof",
+"titulo":"Poesia D’agua",
+"edicao":"1ª ED.",
+"editora":"ROVELLE",
+"categoria":"Poesia",
+"local":"RJ 2013",
+"paginas":"44",
+"quantidade":3
+},
+{
+"codigo":"POE-061",
+"autor":"Sylvia Orthof",
+"titulo":"Poesia D’agua",
+"edicao":"1ª ED.",
+"editora":"FLORESCER",
+"categoria":"Poesia",
+"local":"RJ 2018",
+"paginas":"45",
+"quantidade":1
+},
+{
+"codigo":"POE-062",
+"autor":"Vários Autores",
+"titulo":"Poetas Brasileiros de Hoje",
+"edicao":"",
+"editora":"SHOGUN",
+"categoria":"Poesia",
+"local":"RJ 1986",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"POE-063",
+"autor":"Braulio Bessa",
+"titulo":"Poesia Que Transforma",
+"edicao":"",
+"editora":"SEXTANTE",
+"categoria":"Poesia",
+"local":"RJ 2018",
+"paginas":"192",
+"quantidade":1
+},
+{
+"codigo":"POE-064",
+"autor":"José de Castro Poetrix",
+"titulo":"Poetrix",
+"edicao":"1ª ED.",
+"editora":"DIMENSÃO",
+"categoria":"Poesia",
+"local":"BH 2012",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"POE-065",
+"autor":"Danilo Horta",
+"titulo":"Profecia dos Becos",
+"edicao":"",
+"editora":"VEGA",
+"categoria":"Poesia",
+"local":"BH 1985",
+"paginas":"153",
+"quantidade":1
+},
+{
+"codigo":"POE-066",
+"autor":"Leo Cunha",
+"titulo":"Profissonhos – Um Guia Poético",
+"edicao":"1ª ED.",
+"editora":"PLANETA JOVEM",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"31",
+"quantidade":1
+},
+{
+"codigo":"POE-067",
+"autor":"Amanda Lovelace",
+"titulo":"Quebre Os Seus Sapatinhos de Cristal",
+"edicao":"",
+"editora":"LEYA",
+"categoria":"Poesia Americana",
+"local":"SP 2021",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"POE-068",
+"autor":"Jauar",
+"titulo":"Saudades",
+"edicao":"",
+"editora":"",
+"categoria":"Poesia",
+"local":"",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"POE-069",
+"autor":"Neimar de Barros",
+"titulo":"Sorrindo",
+"edicao":"",
+"editora":"L.OREN",
+"categoria":"Poesias",
+"local":"SP 1976",
+"paginas":"95",
+"quantidade":1
+},
+{
+"codigo":"POE-070",
+"autor":"Neimar de Barros",
+"titulo":"Sorrindo",
+"edicao":"6ª ED.",
+"editora":"O RECADO",
+"categoria":"Poesias",
+"local":"SP 1981",
+"paginas":"92",
+"quantidade":1
+},
+{
+"codigo":"POE-071",
+"autor":"Henry Correa de Araujo",
+"titulo":"Tempo Contrário Tempo",
+"edicao":"",
+"editora":"COMUNICAÇÃO",
+"categoria":"Poesia",
+"local":"BH 1976",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"POE-072",
+"autor":"Adão Ventura",
+"titulo":"Texturaafro",
+"edicao":"2ª ED.",
+"editora":"LÊ",
+"categoria":"Poesia",
+"local":"BH 1997",
+"paginas":"42",
+"quantidade":1
+},
+{
+"codigo":"POE-073",
+"autor":"Paulo Leminski",
+"titulo":"Toda Poesia",
+"edicao":"2ª ED.",
+"editora":"CIA DAS LETRAS",
+"categoria":"Poesia",
+"local":"SP 2018",
+"paginas":"426",
+"quantidade":1
+},
+{
+"codigo":"POE-074",
+"autor":"Marina Colasanti",
+"titulo":"Tudo Tem Princípio e Fim",
+"edicao":"1ª ED.",
+"editora":"BRINQUE-BOOK",
+"categoria":"Poesia",
+"local":"SP 2018",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"POE-075",
+"autor":"Ozório Couto",
+"titulo":"Um Hino À Nação: Drumond",
+"edicao":"",
+"editora":"ADI",
+"categoria":"Poesia",
+"local":"BH 2002",
+"paginas":"88",
+"quantidade":2
+},
+{
+"codigo":"POE-076",
+"autor":"Rodolfo Witzig Guttilla",
+"titulo":"Uns e Outros",
+"edicao":"",
+"editora":"LANDY",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"98",
+"quantidade":1
+},
+{
+"codigo":"POE-077",
+"autor":"Edward Lear",
+"titulo":"Viagem Numa Peneira",
+"edicao":"",
+"editora":"ILUMINURAS",
+"categoria":"Poesia Inglesa",
+"local":"SP 2015",
+"paginas":"162",
+"quantidade":3
+},
+{
+"codigo":"POE-078",
+"autor":"Fernando Paixão",
+"titulo":"25 Azulejos",
+"edicao":"",
+"editora":"ILUMINURIAS",
+"categoria":"Poesia",
+"local":"SP 1994",
+"paginas":"61",
+"quantidade":1
+},
+{
+"codigo":"POE-079",
+"autor":"Verônica Mendes/lùcia Alvarez Leite",
+"titulo":"28 Poemas",
+"edicao":"",
+"editora":"",
+"categoria":"Poesia",
+"local":"BH 1997",
+"paginas":"36",
+"quantidade":1
+},
+{
+"codigo":"POE-080",
+"autor":"Libério Neves",
+"titulo":"Voa Palavra",
+"edicao":"",
+"editora":"FORMATO",
+"categoria":"Poesia",
+"local":"BH 1995",
+"paginas":"41",
+"quantidade":12
+},
+{
+"codigo":"POE-081",
+"autor":"Roseana Murray",
+"titulo":"Rotas de Fuga",
+"edicao":"2ª ED.",
+"editora":"ED. PANTOGRAF",
+"categoria":"Lit.inf.juv.",
+"local":"SP2021",
+"paginas":"107",
+"quantidade":29
+},
+{
+"codigo":"POE-082",
+"autor":"Johann W. Von. Goethe",
+"titulo":"Fausto 1",
+"edicao":"1ª ED.",
+"editora":"ED. OCEANO IND. GRAF.",
+"categoria":"Poemas",
+"local":"SP 2021",
+"paginas":"90",
+"quantidade":1
+},
+{
+"codigo":"POE-083",
+"autor":"Sérgio Capparelli",
+"titulo":"Poemas para Jovens Inquietos",
+"edicao":"1ª ED.",
+"editora":"ED. BUQUI",
+"categoria":"Poemas",
+"local":"RS 2021",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"POE-084",
+"autor":"Chico Pedrosa",
+"titulo":"Carta da Terra",
+"edicao":"",
+"editora":"COQUEIRO",
+"categoria":"Literatura de Cordel",
+"local":"RECIFE 2011",
+"paginas":"22",
+"quantidade":1
+},
+{
+"codigo":"POE-085",
+"autor":"Patativa do Assaré",
+"titulo":"Cordel – Uma Voz do Nordeste",
+"edicao":"2ª ED.",
+"editora":"HEDRA",
+"categoria":"Literatura de Cordel",
+"local":"SP 2007",
+"paginas":"133",
+"quantidade":1
+},
+{
+"codigo":"POE-086",
+"autor":"Moreira de Acopiara",
+"titulo":"Cordel em Arte e Versos",
+"edicao":"1ª ED",
+"editora":"ACATU",
+"categoria":"Literatura de Cordel",
+"local":"SP 2008",
+"paginas":"32",
+"quantidade":1
+},
+{
+"codigo":"POE-087",
+"autor":"Manoel Cabloco e Silva",
+"titulo":"Cordel na Escola (poeta- Astrólogo)",
+"edicao":"1ª ED",
+"editora":"HEDRA",
+"categoria":"Literatura de Cordel",
+"local":"SP 2018",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"POE-088",
+"autor":"Zé Melancia",
+"titulo":"Cordel na Escola (pescaria, Jangada e Poesia)",
+"edicao":"1ª ED.",
+"editora":"HEDRA",
+"categoria":"Literatura de Cordel",
+"local":"SP 2008",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"POE-089",
+"autor":"J. Borges",
+"titulo":"Dicionário dos Sonhos e Outras Histórias de Cordel",
+"edicao":"",
+"editora":"LePM",
+"categoria":"Literatura de Cordel",
+"local":"P.AL.2003",
+"paginas":"48",
+"quantidade":1
+},
+{
+"codigo":"POE-090",
+"autor":"João Melquíades Ferreira da Silva e Francisco das Chagas Batista",
+"titulo":"Histórias no Varal",
+"edicao":"2ª ED.",
+"editora":"GUTENBERG",
+"categoria":"Literatura de Cordel",
+"local":"BH 2008",
+"paginas":"75",
+"quantidade":1
+},
+{
+"codigo":"POE-091",
+"autor":"Aluísio de Azevedo- Adapt. Stélio Torquato Lima",
+"titulo":"O Cortiço em Cordel",
+"edicao":"2ª ED.",
+"editora":"TOTE (PNLD)",
+"categoria":"Literatura de Cordel",
+"local":"SP 2021",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"POE-092",
+"autor":"João Bosco Bezerra Bonfim",
+"titulo":"O Jumento Me o Boi em Cordel",
+"edicao":"1ª ED.",
+"editora":"CARAMELO",
+"categoria":"Literatura de Cordel",
+"local":"SP 2013",
+"paginas":"24",
+"quantidade":1
+},
+{
+"codigo":"POE-093",
+"autor":"Victor Hugo-Adaptação Klévisson Viana",
+"titulo":"Os Miseráveis em Cordel",
+"edicao":"1ª ED.",
+"editora":"NOVA ALEXANDRIA",
+"categoria":"Literatura de Cordel",
+"local":"SP 2008",
+"paginas":"47",
+"quantidade":1
+},
+{
+"codigo":"POE-094",
+"autor":"Fundação Joaquim Nabuco",
+"titulo":"Poetas do Repente",
+"edicao":"",
+"editora":"MASSANGANA",
+"categoria":"Literatura de Cordel",
+"local":"RECIFE 2008",
+"paginas":"38",
+"quantidade":1
+},
+{
+"codigo":"POE-095",
+"autor":"Stélio Torquato",
+"titulo":"Primas em Cordel",
+"edicao":"1ª ED.",
+"editora":"ARMAZÉM DA CULTURA",
+"categoria":"Literatura de Cordel",
+"local":"FORT.2018",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"POE-096",
+"autor":"Stélio Torquato Lima",
+"titulo":"Shakespeare nas Rimas do Cordel",
+"edicao":"1ª ED.",
+"editora":"CARAMINHOCA",
+"categoria":"Literatura de Cordel",
+"local":"SP 2018",
+"paginas":"151",
+"quantidade":1
+},
+{
+"codigo":"GEB-001",
+"autor":"Adelia Prado",
+"titulo":"Bagagem",
+"edicao":"",
+"editora":"SICILIANO",
+"categoria":"Poesia",
+"local":"SP 1991",
+"paginas":"135",
+"quantidade":1
+},
+{
+"codigo":"GEB-002",
+"autor":"Adelia Prado",
+"titulo":"O Pelicano",
+"edicao":"1ª ED",
+"editora":"GUANABARA",
+"categoria":"Poesia",
+"local":"RJ 1987",
+"paginas":"77",
+"quantidade":1
+},
+{
+"codigo":"GEB-003",
+"autor":"Adelia Prado",
+"titulo":"Reunião de Poesia",
+"edicao":"7ª ED",
+"editora":"BEST SELLER",
+"categoria":"Poesia",
+"local":"RJ 2018",
+"paginas":"222",
+"quantidade":1
+},
+{
+"codigo":"GEB-004",
+"autor":"Afonso Arinos",
+"titulo":"Pelo Sertão",
+"edicao":"6ª ED",
+"editora":"ITATIAIA",
+"categoria":"Textos Liter.",
+"local":"BH1981",
+"paginas":"101",
+"quantidade":1
+},
+{
+"codigo":"GEB-005",
+"autor":"Aluisio Azevedo",
+"titulo":"Livro de Uma Sogra",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Romance",
+"local":"RJ1895",
+"paginas":"103",
+"quantidade":1
+},
+{
+"codigo":"GEB-006",
+"autor":"Aluisio Azevedo",
+"titulo":"O Cortiço",
+"edicao":"5ª ED",
+"editora":"ÁTICA",
+"categoria":"Romance",
+"local":"SP 1977",
+"paginas":"159",
+"quantidade":1
+},
+{
+"codigo":"GEB-007",
+"autor":"Aluisio Azevedo",
+"titulo":"Obra Completa / o Cortiço",
+"edicao":"",
+"editora":"WALDRÉ",
+"categoria":"Romance",
+"local":"GOIANIA",
+"paginas":"276",
+"quantidade":1
+},
+{
+"codigo":"GEB-008",
+"autor":"Aluisio Azevedo",
+"titulo":"O Mulato",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"224",
+"quantidade":1
+},
+{
+"codigo":"GEB-009",
+"autor":"Antônio Calado",
+"titulo":"A Madona de Cedro",
+"edicao":"",
+"editora":"CÓDICE",
+"categoria":"Romance",
+"local":"SP 2006",
+"paginas":"223",
+"quantidade":1
+},
+{
+"codigo":"GEB-010",
+"autor":"Antônio Calado",
+"titulo":"Reflexos do Baile (col. Folha)",
+"edicao":"",
+"editora":"MEDIA FASHION",
+"categoria":"Lit. Brasil.",
+"local":"RJ 2008",
+"paginas":"172",
+"quantidade":1
+},
+{
+"codigo":"GEB-011",
+"autor":"Antônio Calado",
+"titulo":"Uma Rede para Iemanja",
+"edicao":"",
+"editora":"FRENTE",
+"categoria":"Teatro",
+"local":"RJ 2008",
+"paginas":"62",
+"quantidade":1
+},
+{
+"codigo":"GEB-012",
+"autor":"Antônio Calado",
+"titulo":"O Homem Cordial",
+"edicao":"2ª ED",
+"editora":"ÁTICA",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"84",
+"quantidade":1
+},
+{
+"codigo":"GEB-013",
+"autor":"Ariano Suassuna",
+"titulo":"Uma Mulher Vestida de Sol",
+"edicao":"3ª ED",
+"editora":"JOSÉ OLIMPIO",
+"categoria":"Peça Teat.",
+"local":"RJ 2005",
+"paginas":"194",
+"quantidade":1
+},
+{
+"codigo":"GEB-014",
+"autor":"Arthur Azevedo",
+"titulo":"Plebiscito e Outros Contos",
+"edicao":"",
+"editora":"REVAN",
+"categoria":"Contos",
+"local":"RJ 1993",
+"paginas":"142",
+"quantidade":1
+},
+{
+"codigo":"GEB-015",
+"autor":"Aurelio Buarque de Holanda",
+"titulo":"Mar de Hist. 6ª Vol. Caminhos Cruzados",
+"edicao":"2ª ED",
+"editora":"NOVA FRONT.",
+"categoria":"Contos",
+"local":"RJ 1982",
+"paginas":"239",
+"quantidade":1
+},
+{
+"codigo":"GEB-016",
+"autor":"Aurelio Buarque de Holanda",
+"titulo":"Mar de Hist. 7ª Vol. Fim de Século",
+"edicao":"2ª ED",
+"editora":"NOVA FRONT.",
+"categoria":"Contos",
+"local":"RJ 1984",
+"paginas":"257",
+"quantidade":1
+},
+{
+"codigo":"GEB-017",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Crônicas 1930 – 1934",
+"edicao":"1ª ED.",
+"editora":"FORMATO",
+"categoria":"Crônicas",
+"local":"BH 1987",
+"paginas":"228",
+"quantidade":1
+},
+{
+"codigo":"GEB-018",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Rick e a Girafa",
+"edicao":"1ª ED.",
+"editora":"ÁTICA",
+"categoria":"Textos",
+"local":"SP 2002",
+"paginas":"112",
+"quantidade":1
+},
+{
+"codigo":"GEB-019",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"A Bolsa e a Vida",
+"edicao":"12ª ED.",
+"editora":"RECORD",
+"categoria":"Cron.prosa e Verso",
+"local":"RJ 1998",
+"paginas":"181",
+"quantidade":1
+},
+{
+"codigo":"GEB-020",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"De Notícias e Não Notícias Faz-Se a Cronica",
+"edicao":"8ª ED.",
+"editora":"RECORD",
+"categoria":"Cronicas",
+"local":"RJ 2004",
+"paginas":"200",
+"quantidade":1
+},
+{
+"codigo":"GEB-021",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Contos de Aprendiz",
+"edicao":"13ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Prosa",
+"local":"RJ 1976",
+"paginas":"160",
+"quantidade":2
+},
+{
+"codigo":"GEB-022",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Contos de Aprendiz",
+"edicao":"37ª ED.",
+"editora":"RECORD",
+"categoria":"Prosa",
+"local":"RJ 1997",
+"paginas":"130",
+"quantidade":1
+},
+{
+"codigo":"GEB-023",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Contos de Aprendiz",
+"edicao":"49ª ED.",
+"editora":"CIV. BRASIL.",
+"categoria":"Prosa",
+"local":"RJ 2006",
+"paginas":"189",
+"quantidade":1
+},
+{
+"codigo":"GEB-024",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"José e Outros",
+"edicao":"9ª ED.",
+"editora":"RECORD",
+"categoria":"Poesia",
+"local":"RJ 2006",
+"paginas":"174",
+"quantidade":1
+},
+{
+"codigo":"GEB-025",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Fala Amendoeira",
+"edicao":"1ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Crônicas",
+"local":"RJ 1978",
+"paginas":"150",
+"quantidade":1
+},
+{
+"codigo":"GEB-026",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Fala Amendoeira",
+"edicao":"1ª ED.",
+"editora":"RECORD",
+"categoria":"Crônicas",
+"local":"RJ 1978",
+"paginas":"156",
+"quantidade":1
+},
+{
+"codigo":"GEB-027",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"História para Rei",
+"edicao":"1ª ED.",
+"editora":"RECORD",
+"categoria":"Contos",
+"local":"RJ 1997",
+"paginas":"93",
+"quantidade":1
+},
+{
+"codigo":"GEB-028",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"70 Histórinhas",
+"edicao":"8ª ED.",
+"editora":"RECORD",
+"categoria":"Contos",
+"local":"RJ 1998",
+"paginas":"167",
+"quantidade":1
+},
+{
+"codigo":"GEB-029",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Sentimento do Mundo",
+"edicao":"1ª ED.",
+"editora":"MÉDIA FASHION",
+"categoria":"Poesia",
+"local":"RJ 2008",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"GEB-030",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Sentimento do Mundo",
+"edicao":"27ª ED",
+"editora":"RECORD",
+"categoria":"Poesia",
+"local":"RJ 2022",
+"paginas":"92",
+"quantidade":1
+},
+{
+"codigo":"GEB-031",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Alguma Poesia",
+"edicao":"15ª ED.",
+"editora":"RECORD",
+"categoria":"Poesia",
+"local":"RJ 2022",
+"paginas":"126",
+"quantidade":1
+},
+{
+"codigo":"GEB-032",
+"autor":"Carlos Drumond de Andrade",
+"titulo":"Claro Enigma",
+"edicao":"21ª ED.",
+"editora":"RECORD",
+"categoria":"Poesia",
+"local":"RJ 2022",
+"paginas":"158",
+"quantidade":1
+},
+{
+"codigo":"GEB-033",
+"autor":"Carlos Heitor Cony",
+"titulo":"Memorias de Um Sargento de Milcias (adaptação)",
+"edicao":"1ª ED.",
+"editora":"SCIPIONE",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2000",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"GEB-034",
+"autor":"Carlos Heitor Cony",
+"titulo":"O Ato e o Fato",
+"edicao":"11ª ED.",
+"editora":"EDIPASS",
+"categoria":"História",
+"local":"RJ 2018",
+"paginas":"215",
+"quantidade":1
+},
+{
+"codigo":"GEB-035",
+"autor":"Carlos Heitor Cony",
+"titulo":"O Irmao Que Tu Me Deste",
+"edicao":"11ª ED.",
+"editora":"EDIOURO",
+"categoria":"Romance",
+"local":"RJ 1979",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"GEB-036",
+"autor":"Carlos Heitor Cony",
+"titulo":"O Irmao Que Tu Me Deste",
+"edicao":"3ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Ficção",
+"local":"RJ 2013",
+"paginas":"134",
+"quantidade":1
+},
+{
+"codigo":"GEB-037",
+"autor":"Carlos Heitor Cony",
+"titulo":"Quase Memória- Quase Romance",
+"edicao":"11ª ED.",
+"editora":"CIA DAS LETRAS",
+"categoria":"Romance",
+"local":"SP 1995",
+"paginas":"213",
+"quantidade":1
+},
+{
+"codigo":"GEB-038",
+"autor":"Carlos Heitor Cony",
+"titulo":"Quinze Anos",
+"edicao":"9ª ED.",
+"editora":"EDIOURO",
+"categoria":"História",
+"local":"RJ -----",
+"paginas":"88",
+"quantidade":1
+},
+{
+"codigo":"GEB-039",
+"autor":"Carlos Heitor Cony",
+"titulo":"Para Ler na Escola",
+"edicao":"",
+"editora":"OBJETIVA",
+"categoria":"Crônicas",
+"local":"RJ 2009",
+"paginas":"156",
+"quantidade":1
+},
+{
+"codigo":"GEB-040",
+"autor":"Castro Alves/nei Lopes",
+"titulo":"Vozes Dàfrica",
+"edicao":"1ª ED.",
+"editora":"AO LIVRO TÉCNICO",
+"categoria":"Escridão",
+"local":"RJ 2017",
+"paginas":"48",
+"quantidade":2
+},
+{
+"codigo":"GEB-041",
+"autor":"Cecília Meireles",
+"titulo":"Antologia Poética",
+"edicao":"3ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Poesia",
+"local":"RJ 2001",
+"paginas":"307",
+"quantidade":1
+},
+{
+"codigo":"GEB-042",
+"autor":"Cecília Meireles",
+"titulo":"Melhores Poemas",
+"edicao":"2ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia",
+"local":"SP 2018",
+"paginas":"202",
+"quantidade":1
+},
+{
+"codigo":"GEB-043",
+"autor":"Cecília Meireles",
+"titulo":"Inéditos",
+"edicao":"1ª ED.",
+"editora":"BLOCH",
+"categoria":"Crônicas",
+"local":"RJ 1967",
+"paginas":"239",
+"quantidade":1
+},
+{
+"codigo":"GEB-044",
+"autor":"Cecília Meireles",
+"titulo":"Olhinhos de Gato",
+"edicao":"3ª ED.",
+"editora":"MODERNA",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2003",
+"paginas":"200",
+"quantidade":1
+},
+{
+"codigo":"GEB-045",
+"autor":"Cecília Meireles",
+"titulo":"Ou Isto Ou Aquilo",
+"edicao":"20ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Poesia",
+"local":"RJ 1990",
+"paginas":"72",
+"quantidade":1
+},
+{
+"codigo":"GEB-046",
+"autor":"Cecília Meireles",
+"titulo":"Romanceiro da Inconfidência",
+"edicao":"",
+"editora":"MÉDIA FASHION",
+"categoria":"História",
+"local":"RJ 2008",
+"paginas":"248",
+"quantidade":1
+},
+{
+"codigo":"GEB-047",
+"autor":"Clarice Lispector",
+"titulo":"A Hora da Estrela",
+"edicao":"",
+"editora":"ROCCO",
+"categoria":"Novela",
+"local":"RJ 1998",
+"paginas":"87",
+"quantidade":1
+},
+{
+"codigo":"GEB-048",
+"autor":"Clarice Lispector",
+"titulo":"A Mulher Que Matou Os Peixes",
+"edicao":"",
+"editora":"ROCCO",
+"categoria":"Lit.inf.juv",
+"local":"RJ 1999",
+"paginas":"46",
+"quantidade":1
+},
+{
+"codigo":"GEB-049",
+"autor":"Clarice Lispector",
+"titulo":"A Mulher Que Matou Os Peixes",
+"edicao":"13ª ED.",
+"editora":"FRANCISCO ALVES",
+"categoria":"Lit.inf.juv",
+"local":"RJ 1977",
+"paginas":"63",
+"quantidade":1
+},
+{
+"codigo":"GEB-050",
+"autor":"Clarice Lispector",
+"titulo":"Aprendendo a Viver",
+"edicao":"1ª ED.",
+"editora":"SOC. LITERÁRIA",
+"categoria":"Cronicas",
+"local":"RJ 2018",
+"paginas":"220",
+"quantidade":1
+},
+{
+"codigo":"GEB-051",
+"autor":"Clarice Lispector",
+"titulo":"Laços de Família",
+"edicao":"1ª ED.",
+"editora":"JPA",
+"categoria":"Contos",
+"local":"RJ 2008",
+"paginas":"135",
+"quantidade":1
+},
+{
+"codigo":"GEB-052",
+"autor":"Clarice Lispector",
+"titulo":"Perto do Coração",
+"edicao":"",
+"editora":"ROCCO",
+"categoria":"Rom. Bras.",
+"local":"RJ 1997",
+"paginas":"224",
+"quantidade":1
+},
+{
+"codigo":"GEB-053",
+"autor":"Clarice Lispector",
+"titulo":"Visão do Esplendor",
+"edicao":"",
+"editora":"FRANCISCO ALVES",
+"categoria":"Prosa",
+"local":"RJ 1975",
+"paginas":"101",
+"quantidade":1
+},
+{
+"codigo":"GEB-054",
+"autor":"Chico Buarque de Holanda",
+"titulo":"Chapeuzinho Amarelo",
+"edicao":"27ª ED.",
+"editora":"JOSÉ OLIMPIO",
+"categoria":"Lit.inf.juv",
+"local":"RJ 2011",
+"paginas":"29",
+"quantidade":1
+},
+{
+"codigo":"GEB-055",
+"autor":"Chico Buarque de Holanda",
+"titulo":"Estorvo",
+"edicao":"",
+"editora":"CIA DAS LETRAS",
+"categoria":"Romance",
+"local":"SP 1991",
+"paginas":"141",
+"quantidade":2
+},
+{
+"codigo":"GEB-056",
+"autor":"Chico Buarque de Holanda",
+"titulo":"Os Saltimbancos (adaptação)",
+"edicao":"1ª ED.",
+"editora":"GLOBAL",
+"categoria":"Lit.inf.juv",
+"local":"SP 2002",
+"paginas":"46",
+"quantidade":3
+},
+{
+"codigo":"GEB-057",
+"autor":"Cora Coralina",
+"titulo":"Melhores Poemas",
+"edicao":"5ª ED.",
+"editora":"A PÁGINA",
+"categoria":"Poesia",
+"local":"CUR. 2018",
+"paginas":"252",
+"quantidade":1
+},
+{
+"codigo":"GEB-058",
+"autor":"Cora Coralina",
+"titulo":"Meu Livro de Cordel",
+"edicao":"17ª ED.",
+"editora":"GAUDÍ",
+"categoria":"Lit. de Cordel",
+"local":"SP 2008",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"GEB-059",
+"autor":"Dias Gomes",
+"titulo":"O Bem Amado",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Teatro",
+"local":"RJ ------",
+"paginas":"126",
+"quantidade":1
+},
+{
+"codigo":"GEB-060",
+"autor":"Dias Gomes",
+"titulo":"O Pagador de Promessas",
+"edicao":"34ª ED.",
+"editora":"BERTRAND BRASIL",
+"categoria":"Teatro",
+"local":"RJ 1997",
+"paginas":"192",
+"quantidade":1
+},
+{
+"codigo":"GEB-061",
+"autor":"Dias Gomes",
+"titulo":"O Santo Inquerito",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Teatro",
+"local":"RJ ------",
+"paginas":"102",
+"quantidade":1
+},
+{
+"codigo":"GEB-062",
+"autor":"Dias Gomes",
+"titulo":"O Santo Inquerito",
+"edicao":"14ª ED.",
+"editora":"BERTRAND BRASIL",
+"categoria":"Teatro",
+"local":"RJ 1997",
+"paginas":"151",
+"quantidade":1
+},
+{
+"codigo":"GEB-063",
+"autor":"Érico Verríssimo",
+"titulo":"As Aventuras de Tibicuera",
+"edicao":"15ª ED.",
+"editora":"GLOBO",
+"categoria":"Lit.inf.juv.",
+"local":"P. AL. 1976",
+"paginas":"151",
+"quantidade":1
+},
+{
+"codigo":"GEB-064",
+"autor":"Érico Verríssimo",
+"titulo":"As Aventuras de Tibicuera",
+"edicao":"16ª ED.",
+"editora":"GLOBO",
+"categoria":"Lit.inf.juv.",
+"local":"P. AL. 1978",
+"paginas":"158",
+"quantidade":1
+},
+{
+"codigo":"GEB-065",
+"autor":"Érico Verríssimo",
+"titulo":"Olhai Os Lírios do Campo",
+"edicao":"5ª ED.",
+"editora":"GLOBO",
+"categoria":"Lit.inf.juv.",
+"local":"P. AL. 1973",
+"paginas":"244",
+"quantidade":1
+},
+{
+"codigo":"GEB-066",
+"autor":"Fernando Gabeira",
+"titulo":"O Que É Isso Companheiro",
+"edicao":"34ª ED.",
+"editora":"GUANABARA",
+"categoria":"Narrativa",
+"local":"RJ 1988",
+"paginas":"185",
+"quantidade":1
+},
+{
+"codigo":"GEB-067",
+"autor":"Fernando Sabino",
+"titulo":"A Vida Real",
+"edicao":"8ª ED.",
+"editora":"RECORD",
+"categoria":"Novela",
+"local":"RJ 1984",
+"paginas":"163",
+"quantidade":1
+},
+{
+"codigo":"GEB-068",
+"autor":"Fernando Sabino",
+"titulo":"O Homem Nu",
+"edicao":"24ª ED.",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 1984",
+"paginas":"569",
+"quantidade":1
+},
+{
+"codigo":"GEB-069",
+"autor":"Fernando Sabino",
+"titulo":"Os Grilos Não Cantam Mais",
+"edicao":"3ª ED.",
+"editora":"RECORD",
+"categoria":"Contos",
+"local":"RJ 1984",
+"paginas":"160",
+"quantidade":1
+},
+{
+"codigo":"GEB-070",
+"autor":"Fernando Sabino",
+"titulo":"Gente",
+"edicao":"3ª ED.",
+"editora":"RECORD",
+"categoria":"Crônica",
+"local":"RJ1984",
+"paginas":"222",
+"quantidade":1
+},
+{
+"codigo":"GEB-071",
+"autor":"Fernando Sabino",
+"titulo":"O Encontro das Águas",
+"edicao":"4ª ED.",
+"editora":"RECORD",
+"categoria":"Cronicas",
+"local":"RJ 1984",
+"paginas":"171",
+"quantidade":1
+},
+{
+"codigo":"GEB-072",
+"autor":"Fernando Sabino",
+"titulo":"O Grande Mentecapto",
+"edicao":"23ª ED.",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 1984",
+"paginas":"236",
+"quantidade":1
+},
+{
+"codigo":"GEB-073",
+"autor":"Fernando Sabino",
+"titulo":"O Grande Mentecapto",
+"edicao":"1ª ED.",
+"editora":"BEST SELLER",
+"categoria":"Romance",
+"local":"RJ 2018",
+"paginas":"256",
+"quantidade":6
+},
+{
+"codigo":"GEB-074",
+"autor":"Fernando Sabino",
+"titulo":"O Grande Mentecapto",
+"edicao":"61ª ED.",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 2002",
+"paginas":"251",
+"quantidade":1
+},
+{
+"codigo":"GEB-075",
+"autor":"Fernando Sabino",
+"titulo":"O Grande Mentecapto",
+"edicao":"",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 2000",
+"paginas":"251",
+"quantidade":1
+},
+{
+"codigo":"GEB-076",
+"autor":"Fernando Sabino",
+"titulo":"A Vitória da Infância",
+"edicao":"4ª ED.",
+"editora":"ÁTICA",
+"categoria":"Crônica",
+"local":"RJ 1994",
+"paginas":"166",
+"quantidade":1
+},
+{
+"codigo":"GEB-077",
+"autor":"Fernando Sabino",
+"titulo":"Canequinho e As Cegonhas",
+"edicao":"4ª ED.",
+"editora":"EDIOURO",
+"categoria":"História",
+"local":"RJ 1975",
+"paginas":"48",
+"quantidade":1
+},
+{
+"codigo":"GEB-078",
+"autor":"Fernando Sabino",
+"titulo":"No Fim Dá Certo",
+"edicao":"8ª ED.",
+"editora":"RECORD",
+"categoria":"Crônica",
+"local":"RJ 2002",
+"paginas":"220",
+"quantidade":1
+},
+{
+"codigo":"GEB-079",
+"autor":"Fernando Sabino",
+"titulo":"Os Melhores Contos de Fernando Sabino",
+"edicao":"6ª ED.",
+"editora":"RECORD",
+"categoria":"Contos",
+"local":"RJ 1998",
+"paginas":"200",
+"quantidade":1
+},
+{
+"codigo":"GEB-080",
+"autor":"Fernando Sabino",
+"titulo":"Martini Seco",
+"edicao":"",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"RJ 1997",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"GEB-081",
+"autor":"Gilberto Freire",
+"titulo":"Casa Grande Senzala",
+"edicao":"34ª ED",
+"editora":"RECORD",
+"categoria":"Cienc.soc.sociol.",
+"local":"RJ 1998",
+"paginas":"569",
+"quantidade":1
+},
+{
+"codigo":"GEB-082",
+"autor":"Guilherme de Almeida",
+"titulo":"Melhores Poemas",
+"edicao":"3ª ED",
+"editora":"GLOBAL",
+"categoria":"Poemas",
+"local":"RJ 2004",
+"paginas":"112",
+"quantidade":1
+},
+{
+"codigo":"GEB-083",
+"autor":"Graciliano Ramos",
+"titulo":"Alexandre e Outros Herois",
+"edicao":"37ª ED",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 1997",
+"paginas":"201",
+"quantidade":1
+},
+{
+"codigo":"GEB-084",
+"autor":"Graciliano Ramos",
+"titulo":"Historias Agrestes",
+"edicao":"",
+"editora":"EDIOURO",
+"categoria":"Contos",
+"local":"RJ ------",
+"paginas":"172",
+"quantidade":1
+},
+{
+"codigo":"GEB-085",
+"autor":"Graciliano Ramos",
+"titulo":"Histórias de Alexandre",
+"edicao":"ESPEC.",
+"editora":"RECORD",
+"categoria":"Contos",
+"local":"RJ 2009",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"GEB-086",
+"autor":"Graciliano Ramos",
+"titulo":"Infância",
+"edicao":"26ª ED",
+"editora":"RECORD",
+"categoria":"Memórias",
+"local":"RJ 1993",
+"paginas":"269",
+"quantidade":1
+},
+{
+"codigo":"GEB-087",
+"autor":"Graciliano Ramos",
+"titulo":"Infância",
+"edicao":"32ª ED",
+"editora":"RECORD",
+"categoria":"Memórias",
+"local":"RJ 1998",
+"paginas":"269",
+"quantidade":1
+},
+{
+"codigo":"GEB-088",
+"autor":"Graciliano Ramos",
+"titulo":"Vidas Secas",
+"edicao":"73ª ED",
+"editora":"RECORD",
+"categoria":"Memórias",
+"local":"RJ 1998",
+"paginas":"155",
+"quantidade":1
+},
+{
+"codigo":"GEB-089",
+"autor":"Henriqueta Lisboa",
+"titulo":"Luz da Lua",
+"edicao":"1ª ED.",
+"editora":"UNO EDUC.",
+"categoria":"Poesia",
+"local":"SP 2009",
+"paginas":"251",
+"quantidade":1
+},
+{
+"codigo":"GEB-090",
+"autor":"João Cabral de Melo Neto",
+"titulo":"A Educação Pela Pedra",
+"edicao":"",
+"editora":"NOVA FRONT.",
+"categoria":"Poesia Bras.",
+"local":"RJ 1996",
+"paginas":"92",
+"quantidade":1
+},
+{
+"codigo":"GEB-091",
+"autor":"João Cabral de Melo Neto",
+"titulo":"Auto do Frade",
+"edicao":"4ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Poesia Bras.",
+"local":"RJ 1984",
+"paginas":"107",
+"quantidade":1
+},
+{
+"codigo":"GEB-092",
+"autor":"João Guimarães Rosa",
+"titulo":"Primeiras Estórias",
+"edicao":"50ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Conto",
+"local":"RJ 2001",
+"paginas":"236",
+"quantidade":1
+},
+{
+"codigo":"GEB-093",
+"autor":"João Guimarães Rosa",
+"titulo":"A Hora e a Vez de Augusto Matraga",
+"edicao":"",
+"editora":"NOVA FRONT.",
+"categoria":"Romance",
+"local":"RJ 1996",
+"paginas":"52",
+"quantidade":2
+},
+{
+"codigo":"GEB-094",
+"autor":"João Guimarães Rosa",
+"titulo":"Grande Sertão Veredas (quadrinhos)",
+"edicao":"3ª ED.",
+"editora":"GLOBO",
+"categoria":"Hist.quad.",
+"local":"RJ 2018",
+"paginas":"180",
+"quantidade":1
+},
+{
+"codigo":"GEB-095",
+"autor":"Joaquim Manuel de Macedo",
+"titulo":"A Moreninha",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"135",
+"quantidade":1
+},
+{
+"codigo":"GEB-096",
+"autor":"Joaquim Manuel de Macedo",
+"titulo":"O Moço Loiro",
+"edicao":"4ª ED.",
+"editora":"ÁTICA",
+"categoria":"Romance",
+"local":"RJ 1876",
+"paginas":"227",
+"quantidade":1
+},
+{
+"codigo":"GEB-097",
+"autor":"José de Alencar",
+"titulo":"A Viuvinha",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Romance",
+"local":"RJ 1993",
+"paginas":"62",
+"quantidade":1
+},
+{
+"codigo":"GEB-098",
+"autor":"José de Alencar",
+"titulo":"Iracema",
+"edicao":"",
+"editora":"SARAIVA",
+"categoria":"Romance",
+"local":"SP 2006",
+"paginas":"198",
+"quantidade":1
+},
+{
+"codigo":"GEB-099",
+"autor":"José de Alencar",
+"titulo":"Iracema",
+"edicao":"",
+"editora":"LePM POCKET",
+"categoria":"Romance",
+"local":"P.AL2002",
+"paginas":"130",
+"quantidade":1
+},
+{
+"codigo":"GEB-100",
+"autor":"José de Alencar",
+"titulo":"Luciola",
+"edicao":"5ª ED.",
+"editora":"FTD",
+"categoria":"Romance",
+"local":"SP 1999",
+"paginas":"155",
+"quantidade":1
+},
+{
+"codigo":"GEB-101",
+"autor":"José de Alencar",
+"titulo":"O Guarani",
+"edicao":"2ª ED.",
+"editora":"SARAIVA",
+"categoria":"Romance",
+"local":"SP 1961",
+"paginas":"183",
+"quantidade":1
+},
+{
+"codigo":"GEB-102",
+"autor":"José de Alencar",
+"titulo":"Senhora",
+"edicao":"",
+"editora":"LePM POCKET",
+"categoria":"Romance",
+"local":"P.AL2002",
+"paginas":"297",
+"quantidade":1
+},
+{
+"codigo":"GEB-103",
+"autor":"José Lins do Rego",
+"titulo":"Doidinho",
+"edicao":"11ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 1972",
+"paginas":"176",
+"quantidade":1
+},
+{
+"codigo":"GEB-104",
+"autor":"José Lins do Rego",
+"titulo":"Meus Verdes Anos",
+"edicao":"5ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Memórias",
+"local":"RJ 1997",
+"paginas":"137",
+"quantidade":1
+},
+{
+"codigo":"GEB-105",
+"autor":"José Lins do Rego",
+"titulo":"Pedra Bonita",
+"edicao":"16ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 2018",
+"paginas":"350",
+"quantidade":1
+},
+{
+"codigo":"GEB-106",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"As Confições de Frei Abóbora",
+"edicao":"3ª ED.",
+"editora":"MELHORAMENTOS",
+"categoria":"Romance",
+"local":"SP 1969",
+"paginas":"298",
+"quantidade":2
+},
+{
+"codigo":"GEB-107",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Arraiá de Fogo",
+"edicao":"4ª ED.",
+"editora":"MELHORAMENTOS",
+"categoria":"Romance",
+"local":"SP 1969",
+"paginas":"267",
+"quantidade":1
+},
+{
+"codigo":"GEB-108",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Barro Blanco",
+"edicao":"9ª ED.",
+"editora":"MELHORAMENTOS",
+"categoria":"Romance",
+"local":"SP 1969",
+"paginas":"234",
+"quantidade":1
+},
+{
+"codigo":"GEB-109",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Coração de Vidro",
+"edicao":"5ª ED.",
+"editora":"MELHORAMENTOS",
+"categoria":"Romance",
+"local":"SP 1969",
+"paginas":"77",
+"quantidade":1
+},
+{
+"codigo":"GEB-110",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Meu Pé de Laranja Lima",
+"edicao":"ESPECIAL",
+"editora":"MELHORAMENTOS",
+"categoria":"Lit.inf.juv",
+"local":"SP 2005",
+"paginas":"189",
+"quantidade":1
+},
+{
+"codigo":"GEB-111",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Meus Verdes Anos",
+"edicao":"5ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Memórias",
+"local":"RJ 1997",
+"paginas":"157",
+"quantidade":1
+},
+{
+"codigo":"GEB-112",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"O Veleiro de Cristal",
+"edicao":"2ª ED.",
+"editora":"MELHORAMENTOS",
+"categoria":"Lit.inf.juv",
+"local":"SP 2006",
+"paginas":"93",
+"quantidade":1
+},
+{
+"codigo":"GEB-113",
+"autor":"José Mauro de Vasconcelos",
+"titulo":"Pedra Bonita",
+"edicao":"16ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 2018",
+"paginas":"350",
+"quantidade":1
+},
+{
+"codigo":"GEB-114",
+"autor":"Jorge Amado",
+"titulo":"Capitães da Areia",
+"edicao":"90ª ED.",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 1997",
+"paginas":"272",
+"quantidade":1
+},
+{
+"codigo":"GEB-115",
+"autor":"Jorge Amado",
+"titulo":"Mar Morto",
+"edicao":"73ª ED.",
+"editora":"RECORD",
+"categoria":"Romance",
+"local":"RJ 1997",
+"paginas":"155",
+"quantidade":1
+},
+{
+"codigo":"GEB-116",
+"autor":"Jorge Amado",
+"titulo":"O Gato Malahdo e a Andorinha Sinhá",
+"edicao":"26ª ED.",
+"editora":"RECORD",
+"categoria":"Lit.inf.juv",
+"local":"RJ 1998",
+"paginas":"51",
+"quantidade":1
+},
+{
+"codigo":"GEB-117",
+"autor":"Jorge Amado",
+"titulo":"O Gato Malahdo e a Andorinha Sinhá",
+"edicao":"29ª ED.",
+"editora":"RECORD",
+"categoria":"Lit.inf.juv",
+"local":"RJ 1998",
+"paginas":"51",
+"quantidade":1
+},
+{
+"codigo":"GEB-118",
+"autor":"Jorge Amado",
+"titulo":"O Gato Malahdo e a Andorinha Sinhá",
+"edicao":"1ª ED.",
+"editora":"BERTRAND",
+"categoria":"Lit.inf.juv",
+"local":"RJ 2002",
+"paginas":"63",
+"quantidade":1
+},
+{
+"codigo":"GEB-119",
+"autor":"Jorge Amado",
+"titulo":"O Menino Grapiuna",
+"edicao":"17ª ED.",
+"editora":"RECORD",
+"categoria":"Lit.inf.juv",
+"local":"RJ 2002",
+"paginas":"120",
+"quantidade":1
+},
+{
+"codigo":"GEB-120",
+"autor":"Jorge Amado",
+"titulo":"Seara Vermelha",
+"edicao":"1ª ED.",
+"editora":"CLARO ENIGMA",
+"categoria":"Lit.inf.juv",
+"local":"RJ 2018",
+"paginas":"164",
+"quantidade":1
+},
+{
+"codigo":"GEB-121",
+"autor":"Lima Barreto",
+"titulo":"O Homem Que Sabia Javanês",
+"edicao":"",
+"editora":"CLUB. DO LIVRO",
+"categoria":"Romance",
+"local":"SP 1965",
+"paginas":"141",
+"quantidade":1
+},
+{
+"codigo":"GEB-122",
+"autor":"Lima Barreto",
+"titulo":"O Triste Fim de Policarpo Quaresma",
+"edicao":"13ª ED.",
+"editora":"ATICA",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"182",
+"quantidade":1
+},
+{
+"codigo":"GEB-123",
+"autor":"Lima Barreto",
+"titulo":"O Triste Fim de Policarpo Quaresma",
+"edicao":"2ª ED.",
+"editora":"NÚCLEO",
+"categoria":"Romance",
+"local":"SP 1995",
+"paginas":"156",
+"quantidade":1
+},
+{
+"codigo":"GEB-124",
+"autor":"Lima Barreto",
+"titulo":"O Triste Fim de Policarpo Quaresma",
+"edicao":"",
+"editora":"PAULUS",
+"categoria":"Romance",
+"local":"SP 2005",
+"paginas":"199",
+"quantidade":2
+},
+{
+"codigo":"GEB-125",
+"autor":"Luis da Camara Cascudo",
+"titulo":"Contos Tradicionais do Brasil",
+"edicao":"14ª ED.",
+"editora":"LDM",
+"categoria":"Contos",
+"local":"SALV- 2018",
+"paginas":"413",
+"quantidade":1
+},
+{
+"codigo":"GEB-126",
+"autor":"Luis da Camara Cascudo",
+"titulo":"Lendas Brasileiras",
+"edicao":"11ª ED.",
+"editora":"GAIA",
+"categoria":"Folclore",
+"local":"SP 2010",
+"paginas":"168",
+"quantidade":1
+},
+{
+"codigo":"GEB-127",
+"autor":"Luis da Camara Cascudo",
+"titulo":"Lendas Brasileiras para Jovens",
+"edicao":"1ª ED.",
+"editora":"GLOBAL",
+"categoria":"Contos Bras.",
+"local":"SP 2006",
+"paginas":"126",
+"quantidade":1
+},
+{
+"codigo":"GEB-128",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"A Velhinha de Taubaté",
+"edicao":"",
+"editora":"LePM",
+"categoria":"Histórias",
+"local":"P.AL 1983",
+"paginas":"142",
+"quantidade":1
+},
+{
+"codigo":"GEB-129",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"Ed Mort com a Mão no Milhão",
+"edicao":"",
+"editora":"LePM",
+"categoria":"Não Informada",
+"local":"SP 1997",
+"paginas":"55",
+"quantidade":1
+},
+{
+"codigo":"GEB-130",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"Informe do Palneta Azul",
+"edicao":"1ª ED.",
+"editora":"BONIFÁCIO",
+"categoria":"Contos",
+"local":"SP 2018",
+"paginas":"151",
+"quantidade":1
+},
+{
+"codigo":"GEB-131",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"Mais Comédias para Ler na Escola",
+"edicao":"",
+"editora":"OBJETIVA",
+"categoria":"Cronica",
+"local":"RJ 2008",
+"paginas":"148",
+"quantidade":1
+},
+{
+"codigo":"GEB-132",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"O Nariz",
+"edicao":"12ª ED.",
+"editora":"ATICA",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2007",
+"paginas":"111",
+"quantidade":1
+},
+{
+"codigo":"GEB-133",
+"autor":"Luis Fernando Veríssimo",
+"titulo":"O Rei do Rock",
+"edicao":"3ª ED.",
+"editora":"GLOBO",
+"categoria":"Cronicas",
+"local":"SP 1996",
+"paginas":"148",
+"quantidade":1
+},
+{
+"codigo":"GEB-134",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Antes do Baile Verde",
+"edicao":"",
+"editora":"ROCO",
+"categoria":"Contos",
+"local":"",
+"paginas":"159",
+"quantidade":1
+},
+{
+"codigo":"GEB-135",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Antes do Baile Verde",
+"edicao":"",
+"editora":"CIA DAS LETRAS",
+"categoria":"Contos",
+"local":"SP 2009",
+"paginas":"205",
+"quantidade":1
+},
+{
+"codigo":"GEB-136",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Histórias de Mistério",
+"edicao":"3ª ED.",
+"editora":"CIA DAS LETRAS",
+"categoria":"Contos",
+"local":"SP 2011",
+"paginas":"63",
+"quantidade":1
+},
+{
+"codigo":"GEB-137",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Oito Contos de Amor",
+"edicao":"4ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP2002",
+"paginas":"87",
+"quantidade":1
+},
+{
+"codigo":"GEB-138",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Os Melhores Contos",
+"edicao":"8ª ED.",
+"editora":"GLOBAL",
+"categoria":"Contos",
+"local":"SP 1997",
+"paginas":"175",
+"quantidade":1
+},
+{
+"codigo":"GEB-139",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Venha Ver o por do Sol",
+"edicao":"",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 1991",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"GEB-140",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Venha Ver o por do Sol",
+"edicao":"",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 1993",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"GEB-141",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Venha Ver o por do Sol",
+"edicao":"14ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 1997",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"GEB-142",
+"autor":"Lygia Fagundes Teles",
+"titulo":"Venha Ver o por do Sol",
+"edicao":"1ª ED.",
+"editora":"ÁTICA",
+"categoria":"Contos",
+"local":"SP 2007",
+"paginas":"78",
+"quantidade":1
+},
+{
+"codigo":"GEB-143",
+"autor":"Machado de Assis",
+"titulo":"A Cartomante",
+"edicao":"",
+"editora":"MODERNA",
+"categoria":"Conto",
+"local":"SP 1983",
+"paginas":"62",
+"quantidade":1
+},
+{
+"codigo":"GEB-144",
+"autor":"Machado de Assis",
+"titulo":"A Cartomante",
+"edicao":"",
+"editora":"ESCALA EDUC.",
+"categoria":"Conto",
+"local":"SP 2010",
+"paginas":"37",
+"quantidade":1
+},
+{
+"codigo":"GEB-145",
+"autor":"Machado de Assis",
+"titulo":"A Vida dos Grandes Brasileiros",
+"edicao":"",
+"editora":"TRÊS",
+"categoria":"Literatura",
+"local":"RJ 1974",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-146",
+"autor":"Machado de Assis",
+"titulo":"A Mão e a Luva",
+"edicao":"VOL 125",
+"editora":"L&PM POKET",
+"categoria":"Romance",
+"local":"RJ 2021",
+"paginas":"160",
+"quantidade":15
+},
+{
+"codigo":"GEB-147",
+"autor":"Machado de Assis",
+"titulo":"Conto de Escola",
+"edicao":"",
+"editora":"PAULUS",
+"categoria":"Lit.inf.juv",
+"local":"SP 2008",
+"paginas":"32",
+"quantidade":1
+},
+{
+"codigo":"GEB-148",
+"autor":"Machado de Assis",
+"titulo":"Contos",
+"edicao":"",
+"editora":"FTD",
+"categoria":"Conto",
+"local":"SP 2002",
+"paginas":"304",
+"quantidade":1
+},
+{
+"codigo":"GEB-149",
+"autor":"Machado de Assis",
+"titulo":"Contos Fantásticos",
+"edicao":"2ª",
+"editora":"BLOCH",
+"categoria":"Conto",
+"local":"RJ 1998",
+"paginas":"191",
+"quantidade":1
+},
+{
+"codigo":"GEB-150",
+"autor":"Machado de Assis",
+"titulo":"Memórias Póstumas de Brás Cubas",
+"edicao":"TEXTO COND.",
+"editora":"RIDEEL",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"59",
+"quantidade":1
+},
+{
+"codigo":"GEB-151",
+"autor":"Machado de Assis",
+"titulo":"Memórias Póstumas de Brás Cubas",
+"edicao":"VOL 40",
+"editora":"L&PM POKET",
+"categoria":"Romance",
+"local":"RJ 2021",
+"paginas":"256",
+"quantidade":15
+},
+{
+"codigo":"GEB-152",
+"autor":"Machado de Assis",
+"titulo":"O Alienista e Outros Contos",
+"edicao":"3ª",
+"editora":"MODERNA",
+"categoria":"Romance",
+"local":"SP 2004",
+"paginas":"104",
+"quantidade":2
+},
+{
+"codigo":"GEB-153",
+"autor":"Machado de Assis",
+"titulo":"O Alienista",
+"edicao":"VOL 97",
+"editora":"L&PM POKET",
+"categoria":"Romance",
+"local":"RS",
+"paginas":"2021",
+"quantidade":15
+},
+{
+"codigo":"GEB-154",
+"autor":"Machado de Assis",
+"titulo":"Papeis Avulsos",
+"edicao":"1ª",
+"editora":"MARTINS FONTES",
+"categoria":"Conto",
+"local":"SP 2005",
+"paginas":"272",
+"quantidade":1
+},
+{
+"codigo":"GEB-155",
+"autor":"Machado de Assis",
+"titulo":"Quincas Borbas",
+"edicao":"2ª",
+"editora":"ATICA",
+"categoria":"Romance",
+"local":"SP 1973",
+"paginas":"191",
+"quantidade":1
+},
+{
+"codigo":"GEB-156",
+"autor":"Machado de Assis",
+"titulo":"Quincas Borbas",
+"edicao":"",
+"editora":"IMP OF.MG",
+"categoria":"Llit.brasil.",
+"local":"BH 2001",
+"paginas":"218",
+"quantidade":1
+},
+{
+"codigo":"GEB-157",
+"autor":"Machado de Assis",
+"titulo":"Quincas Borba",
+"edicao":"VOL 51",
+"editora":"L&PM POKET",
+"categoria":"Romance",
+"local":"RS 2021",
+"paginas":"304",
+"quantidade":15
+},
+{
+"codigo":"GEB-158",
+"autor":"Machado de Assis",
+"titulo":"Sete Contos",
+"edicao":"",
+"editora":"ITATIAIA",
+"categoria":"Conto",
+"local":"BH",
+"paginas":"82",
+"quantidade":1
+},
+{
+"codigo":"GEB-159",
+"autor":"Machado de Assis",
+"titulo":"Uns Braços - Conto de Escola",
+"edicao":"",
+"editora":"ITATIAIA",
+"categoria":"Conto",
+"local":"BH",
+"paginas":"39",
+"quantidade":2
+},
+{
+"codigo":"GEB-160",
+"autor":"Machado de Assis",
+"titulo":"Várias Histórias",
+"edicao":"14ª",
+"editora":"GARNIER",
+"categoria":"Histórias",
+"local":"BH",
+"paginas":"163",
+"quantidade":1
+},
+{
+"codigo":"GEB-161",
+"autor":"Machado de Assis",
+"titulo":"Várias Histórias-***",
+"edicao":"2ª ED",
+"editora":"ATÊLIE EDITORIAL",
+"categoria":"Histórias",
+"local":"SP 2018",
+"paginas":"286",
+"quantidade":15
+},
+{
+"codigo":"GEB-162",
+"autor":"Machado de Assis",
+"titulo":"Helena",
+"edicao":"1ª ED",
+"editora":"PRINCIPIS",
+"categoria":"Romance",
+"local":"SP 2021",
+"paginas":"192",
+"quantidade":15
+},
+{
+"codigo":"GEB-163",
+"autor":"Manuel Antonio de Almeida",
+"titulo":"Memorias de Um Sargento de Milcias",
+"edicao":"16ª",
+"editora":"ATICA",
+"categoria":"Romance",
+"local":"SP 1989",
+"paginas":"136",
+"quantidade":1
+},
+{
+"codigo":"GEB-164",
+"autor":"Manuel Antonio de Almeida",
+"titulo":"Memorias de Um Sargento de Milcias",
+"edicao":"31ª",
+"editora":"EDIOURO",
+"categoria":"Romance",
+"local":"RJ 1996",
+"paginas":"121",
+"quantidade":1
+},
+{
+"codigo":"GEB-165",
+"autor":"Manuel Bandeira",
+"titulo":"Andorinha, Andorinha",
+"edicao":"2ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Crônicas",
+"local":"RJ 1986",
+"paginas":"209",
+"quantidade":1
+},
+{
+"codigo":"GEB-166",
+"autor":"Manuel Bandeira",
+"titulo":"Antonolgia Poetica",
+"edicao":"16ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Poema",
+"local":"RJ 1986",
+"paginas":"209",
+"quantidade":1
+},
+{
+"codigo":"GEB-167",
+"autor":"Manuel Bandeira",
+"titulo":"Antonolgia Poetica",
+"edicao":"12ª ED.",
+"editora":"NOVA FRONTEIRA",
+"categoria":"Poesia",
+"local":"RJ 2001",
+"paginas":"226",
+"quantidade":1
+},
+{
+"codigo":"GEB-168",
+"autor":"Manuel Bandeira",
+"titulo":"Libertinagem e Estrela da Manhã (coleção Folha Gdes Escritores)",
+"edicao":"1ª ED.",
+"editora":"MEDIA FASHION",
+"categoria":"Lit.bras.",
+"local":"RJ 2008",
+"paginas":"104",
+"quantidade":1
+},
+{
+"codigo":"GEB-169",
+"autor":"Manuel Bandeira",
+"titulo":"Os Sinos",
+"edicao":"2ª ED.",
+"editora":"GAUDI",
+"categoria":"Poesia Inf.juv",
+"local":"SP2003",
+"paginas":"23",
+"quantidade":2
+},
+{
+"codigo":"GEB-170",
+"autor":"Manuel Bandeira",
+"titulo":"Para Querer Bem",
+"edicao":"1ª ED.",
+"editora":"MODERNA",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"GEB-171",
+"autor":"Manuel Bandeira",
+"titulo":"Poesia e Vida de Gonçalves Dias",
+"edicao":"",
+"editora":"DAS AMÉRICAS",
+"categoria":"Poesias",
+"local":"SP 1962",
+"paginas":"173",
+"quantidade":1
+},
+{
+"codigo":"GEB-172",
+"autor":"Manoel de Barros",
+"titulo":"Concerto a Ceu Aberto para Solos de Ave",
+"edicao":"2ª ED.",
+"editora":"CIVILIZAÇÃO BRAS.",
+"categoria":"Poesia",
+"local":"RJ 1998",
+"paginas":"61",
+"quantidade":1
+},
+{
+"codigo":"GEB-173",
+"autor":"Manoel de Barros",
+"titulo":"Memórias Inventadas para Crianças",
+"edicao":"1ª ED.",
+"editora":"PLANETA JOVEM",
+"categoria":"Contos",
+"local":"SP 2006",
+"paginas":"23",
+"quantidade":1
+},
+{
+"codigo":"GEB-174",
+"autor":"Manoel de Barros",
+"titulo":"Menino do Mato",
+"edicao":"",
+"editora":"TEXTO EDITORES",
+"categoria":"Poesia",
+"local":"SP 2010",
+"paginas":"95",
+"quantidade":1
+},
+{
+"codigo":"GEB-175",
+"autor":"Manoel de Barros",
+"titulo":"Meu Quintal É o Maior do Mundo",
+"edicao":"1ª ED.",
+"editora":"REVIRAVOLTA",
+"categoria":"Poesia",
+"local":"RJ 2018",
+"paginas":"166",
+"quantidade":1
+},
+{
+"codigo":"GEB-176",
+"autor":"Manoel de Barros",
+"titulo":"Poemas Rupestres",
+"edicao":"2ª",
+"editora":"BEST SELLER",
+"categoria":"Poesia",
+"local":"RJ 2006",
+"paginas":"75",
+"quantidade":1
+},
+{
+"codigo":"GEB-177",
+"autor":"Maria Clara Machado",
+"titulo":"A Menina e o Vento",
+"edicao":"3ª ED.",
+"editora":"ATICA",
+"categoria":"Teatro Inf.juv.",
+"local":"RJ 2009",
+"paginas":"136",
+"quantidade":1
+},
+{
+"codigo":"GEB-178",
+"autor":"Maria Clara Machado",
+"titulo":"Antologia de Histórias",
+"edicao":"13ª ED.",
+"editora":"EDIOURO",
+"categoria":"Lit. Inf. Juv.",
+"local":"RJ 1996",
+"paginas":"105",
+"quantidade":1
+},
+{
+"codigo":"GEB-179",
+"autor":"Maria Clara Machado",
+"titulo":"O Cavalinho Azul e Outras Peças",
+"edicao":"3ª ED.",
+"editora":"EDIPASS",
+"categoria":"Lit. Inf. Juv.",
+"local":"RJ 2018",
+"paginas":"297",
+"quantidade":1
+},
+{
+"codigo":"GEB-180",
+"autor":"Maria Clara Machado",
+"titulo":"Pluft, o Fantasminha",
+"edicao":"3ª ED.",
+"editora":"NOVA FRONT",
+"categoria":"Teatro Inf.juv.",
+"local":"RJ 2012",
+"paginas":"284",
+"quantidade":1
+},
+{
+"codigo":"GEB-181",
+"autor":"Maria Clara Machado",
+"titulo":"Tudo por Um Fio",
+"edicao":"4ª ED.",
+"editora":"EBC",
+"categoria":"Teat. Inf.juv.",
+"local":"RJ 2001",
+"paginas":"95",
+"quantidade":1
+},
+{
+"codigo":"GEB-182",
+"autor":"Marcelo Rubens Paiva",
+"titulo":"Feliz Ano Velho",
+"edicao":"1ª ED.",
+"editora":"OBJETIVA",
+"categoria":"Romance",
+"local":"RJ 2006",
+"paginas":"276",
+"quantidade":1
+},
+{
+"codigo":"GEB-183",
+"autor":"Marcelo Rubens Paiva",
+"titulo":"Não És Tu, Brasil",
+"edicao":"",
+"editora":"MANDARIM",
+"categoria":"Romance",
+"local":"SP 1996",
+"paginas":"294",
+"quantidade":1
+},
+{
+"codigo":"GEB-184",
+"autor":"Maria José Dupré",
+"titulo":"A Montanha Encantada",
+"edicao":"5ª ED.",
+"editora":"ATICA",
+"categoria":"Lit. Inf. Juv.",
+"local":"SP 1978",
+"paginas":"111",
+"quantidade":3
+},
+{
+"codigo":"GEB-185",
+"autor":"Maria José Dupré",
+"titulo":"O Cachorrinho Samba na Fazenda",
+"edicao":"6ª ED.",
+"editora":"ATICA",
+"categoria":"Lit. Inf. Juv.",
+"local":"SP 1975",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"GEB-186",
+"autor":"Marina Colasanti",
+"titulo":"Ana Z., Aonde Vai Você?",
+"edicao":"14ª ED.",
+"editora":"ATICA",
+"categoria":"Lit. Inf. Juv.",
+"local":"SP 2018",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"GEB-187",
+"autor":"Marina Colasanti",
+"titulo":"Minha Ilha Maravilhosa",
+"edicao":"",
+"editora":"ÀTICA",
+"categoria":"Poesia",
+"local":"SP 2007",
+"paginas":"40",
+"quantidade":1
+},
+{
+"codigo":"GEB-188",
+"autor":"Marina Colasanti",
+"titulo":"Longe Como o Meu Querer",
+"edicao":"",
+"editora":"ATICA",
+"categoria":"Lit. Inf. Juv.",
+"local":"SP 1997",
+"paginas":"132",
+"quantidade":1
+},
+{
+"codigo":"GEB-189",
+"autor":"Marina Colasanti",
+"titulo":"Uma Ideia Toda Azul",
+"edicao":"19ª ED.",
+"editora":"GLOBAL",
+"categoria":"Contos de Fada",
+"local":"SP 1999",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"GEB-190",
+"autor":"Marina Colasanti",
+"titulo":"23 Histórias de Um Viajante",
+"edicao":"",
+"editora":"GLOBAL",
+"categoria":"Contos",
+"local":"SP 2005",
+"paginas":"223",
+"quantidade":3
+},
+{
+"codigo":"GEB-191",
+"autor":"Mario de Andrade",
+"titulo":"Amar, Verbo Intransitivo",
+"edicao":"12ª ED.",
+"editora":"ITATIAIA",
+"categoria":"Romance",
+"local":"BH 1986",
+"paginas":"155",
+"quantidade":1
+},
+{
+"codigo":"GEB-192",
+"autor":"Mario de Andrade",
+"titulo":"Contos de Belazarte",
+"edicao":"8ª ED.",
+"editora":"VILA RICA",
+"categoria":"Contos",
+"local":"BH 1992",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"GEB-193",
+"autor":"Mario de Andrade",
+"titulo":"Melhores Poemas",
+"edicao":"4ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia",
+"local":"SP 1997",
+"paginas":"110",
+"quantidade":1
+},
+{
+"codigo":"GEB-194",
+"autor":"Mario Quintana",
+"titulo":"A Vaca e o Hipogrifo",
+"edicao":"1ª ED.",
+"editora":"MEDIA FASHION",
+"categoria":"Prosa/poesia",
+"local":"RJ 2008",
+"paginas":"272",
+"quantidade":1
+},
+{
+"codigo":"GEB-195",
+"autor":"Mario Quintana",
+"titulo":"Melhores Poemas (fausto Cunha)",
+"edicao":"17ª ED.",
+"editora":"GLOBAL",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"120",
+"quantidade":1
+},
+{
+"codigo":"GEB-196",
+"autor":"Mario Quintana",
+"titulo":"Mestres da Lit. (márcio Vassallo)",
+"edicao":"1ª ED.",
+"editora":"MODERNA",
+"categoria":"Poesia",
+"local":"SO 2005",
+"paginas":"55",
+"quantidade":1
+},
+{
+"codigo":"GEB-197",
+"autor":"Mario Quintana",
+"titulo":"O Aprendiz de Feiticeiro",
+"edicao":"2ªED.",
+"editora":"GLOBO",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"69",
+"quantidade":1
+},
+{
+"codigo":"GEB-198",
+"autor":"Milor Fernandes",
+"titulo":"O Homem do Principio ao Fim",
+"edicao":"",
+"editora":"L E P POCKET",
+"categoria":"Teatro",
+"local":"P. A. 2007",
+"paginas":"136",
+"quantidade":1
+},
+{
+"codigo":"GEB-199",
+"autor":"Monteiro Lobato",
+"titulo":"A Reforma da Natureza",
+"edicao":"2ª ED.",
+"editora":"GLOBO",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2010",
+"paginas":"71",
+"quantidade":1
+},
+{
+"codigo":"GEB-200",
+"autor":"Monteiro Lobato",
+"titulo":"Cidades Mortas",
+"edicao":"",
+"editora":"BRASILIENSE",
+"categoria":"Contos",
+"local":"SP 1995",
+"paginas":"243",
+"quantidade":1
+},
+{
+"codigo":"GEB-201",
+"autor":"Monteiro Lobato",
+"titulo":"Dom Quixote das Crianças",
+"edicao":"15ª ED.",
+"editora":"BRASILIENSE",
+"categoria":"Literatura",
+"local":"SP 1974",
+"paginas":"134",
+"quantidade":1
+},
+{
+"codigo":"GEB-202",
+"autor":"Monteiro Lobato",
+"titulo":"Mr. Slang e o Brasil e Problema Vital",
+"edicao":"",
+"editora":"BRASILIENSE",
+"categoria":"Literatura",
+"local":"SP ---",
+"paginas":"254",
+"quantidade":1
+},
+{
+"codigo":"GEB-203",
+"autor":"Monteiro Lobato",
+"titulo":"O Minotauro",
+"edicao":"1ª ED.",
+"editora":"GLOBO KIDS",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2012",
+"paginas":"167",
+"quantidade":1
+},
+{
+"codigo":"GEB-204",
+"autor":"Monteiro Lobato",
+"titulo":"O Saci",
+"edicao":"56ª ED.",
+"editora":"BRASILIENSE",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2004",
+"paginas":"46",
+"quantidade":1
+},
+{
+"codigo":"GEB-205",
+"autor":"Monteiro Lobato",
+"titulo":"O Sitio do Picapau Amarelo",
+"edicao":"2ª ED.",
+"editora":"BRASILIENSE",
+"categoria":"Lit.inf.juv.",
+"local":"SP",
+"paginas":"22",
+"quantidade":1
+},
+{
+"codigo":"GEB-206",
+"autor":"Monteiro Lobato",
+"titulo":"Reinações de Narizinho",
+"edicao":"1ª ED.",
+"editora":"GLOBO",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2007",
+"paginas":"154",
+"quantidade":1
+},
+{
+"codigo":"GEB-207",
+"autor":"Monteiro Lobato",
+"titulo":"Trabalhos de Hércules",
+"edicao":"",
+"editora":"BRASILIENSE",
+"categoria":"Lit.inf.juv.",
+"local":"SP 1972",
+"paginas":"113",
+"quantidade":1
+},
+{
+"codigo":"GEB-208",
+"autor":"Monteiro Lobato",
+"titulo":"Urupés",
+"edicao":"1ª ED.",
+"editora":"BRASILIENSE",
+"categoria":"Lit.inf.juv.",
+"local":"SP 1994",
+"paginas":"179",
+"quantidade":1
+},
+{
+"codigo":"GEB-209",
+"autor":"Murilo Rubião",
+"titulo":"Bárbara",
+"edicao":"1ª ED.",
+"editora":"POSIGRAF",
+"categoria":"Literatura",
+"local":"CUR 2018",
+"paginas":"48",
+"quantidade":1
+},
+{
+"codigo":"GEB-210",
+"autor":"Murilo Rubião",
+"titulo":"Contos de Murilo Rubião",
+"edicao":"",
+"editora":"DIF.CULTURAL",
+"categoria":"Contos",
+"local":"SP 2004",
+"paginas":"80",
+"quantidade":1
+},
+{
+"codigo":"GEB-211",
+"autor":"Murilo Rubião",
+"titulo":"Teleco, o Coelhinho",
+"edicao":"2ª ED.",
+"editora":"APRENDE",
+"categoria":"Ficção Bras.",
+"local":"CUR 2018",
+"paginas":"47",
+"quantidade":1
+},
+{
+"codigo":"GEB-212",
+"autor":"Nelson Rodrigues",
+"titulo":"Vestido de Noiva (coleção Folha)",
+"edicao":"1ª ED.",
+"editora":"MEDIA FASHION",
+"categoria":"Teatro Brasil.",
+"local":"RJ 2008",
+"paginas":"88",
+"quantidade":1
+},
+{
+"codigo":"GEB-213",
+"autor":"Osvald de Andrade",
+"titulo":"Pau Brasil",
+"edicao":"4ª ED.",
+"editora":"GLOBO",
+"categoria":"Poesia",
+"local":"SP 1991",
+"paginas":"145",
+"quantidade":1
+},
+{
+"codigo":"GEB-214",
+"autor":"Oto Lara Resende",
+"titulo":"O Elo Partido e Outras Hist.",
+"edicao":"4ª ED.",
+"editora":"ATICA",
+"categoria":"Contos",
+"local":"SP 1996",
+"paginas":"56",
+"quantidade":1
+},
+{
+"codigo":"GEB-215",
+"autor":"Olavo Bilac- Org. Ubiratan Machado",
+"titulo":"Olavo Bilac – Melhores Crônicas",
+"edicao":"",
+"editora":"GLOBAL",
+"categoria":"Crônicas",
+"local":"SP 2005",
+"paginas":"297",
+"quantidade":1
+},
+{
+"codigo":"GEB-216",
+"autor":"Olavo Romano",
+"titulo":"Minas e Seus Casos",
+"edicao":"",
+"editora":"ATICA",
+"categoria":"Contos",
+"local":"SP 1984",
+"paginas":"127",
+"quantidade":1
+},
+{
+"codigo":"GEB-217",
+"autor":"Olavo Romano",
+"titulo":"Prosa de Mineiro",
+"edicao":"",
+"editora":"LÊ",
+"categoria":"Contos",
+"local":"BH 1986",
+"paginas":"108",
+"quantidade":1
+},
+{
+"codigo":"GEB-218",
+"autor":"Origenes Lessa",
+"titulo":"A Greve das Bolhas",
+"edicao":"2ª ED.",
+"editora":"NORDICA",
+"categoria":"Lit.inf.juv.",
+"local":"RJ 1981",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"GEB-219",
+"autor":"Origenes Lessa",
+"titulo":"Aventuras do Moleque Jabuti",
+"edicao":"7ª ED.",
+"editora":"EDIOURO",
+"categoria":"Novela Inf.",
+"local":"SP 1972",
+"paginas":"136",
+"quantidade":1
+},
+{
+"codigo":"GEB-220",
+"autor":"Origenes Lessa",
+"titulo":"A Escada de Nuvens",
+"edicao":"7ª ED.",
+"editora":"EDIOURO",
+"categoria":"Novela Inf.",
+"local":"SP 1972",
+"paginas":"119",
+"quantidade":1
+},
+{
+"codigo":"GEB-221",
+"autor":"Origenes Lessa",
+"titulo":"Memórias de Um Cabo de Vassoura",
+"edicao":"45ª ED.",
+"editora":"PIXEL",
+"categoria":"Lit. Inf. Juv.",
+"local":"RJ 2008",
+"paginas":"109",
+"quantidade":1
+},
+{
+"codigo":"GEB-222",
+"autor":"Origenes Lessa",
+"titulo":"Milagre em Ouro Preto",
+"edicao":"2ª ED.",
+"editora":"NOVA FRONT.",
+"categoria":"Lit. Inf. Juv.",
+"local":"RJ 1984",
+"paginas":"104",
+"quantidade":1
+},
+{
+"codigo":"GEB-223",
+"autor":"Origenes Lessa",
+"titulo":"Um Rosto Perdido",
+"edicao":"4ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Contos",
+"local":"RJ 1997",
+"paginas":"104",
+"quantidade":1
+},
+{
+"codigo":"GEB-224",
+"autor":"Patativa do Assaré",
+"titulo":"Antologiaia Poética",
+"edicao":"5ª ED.",
+"editora":"DEMOCRITO ROCHA",
+"categoria":"Poesia",
+"local":"FORT. 2007",
+"paginas":"326",
+"quantidade":1
+},
+{
+"codigo":"GEB-225",
+"autor":"Patativa do Assaré",
+"titulo":"Aqui Tem Coisa",
+"edicao":"1ª ED.",
+"editora":"CONFIANÇA",
+"categoria":"Cordel",
+"local":"SP 2018",
+"paginas":"227",
+"quantidade":1
+},
+{
+"codigo":"GEB-226",
+"autor":"Patativa do Assaré",
+"titulo":"Inspiração Nordestina",
+"edicao":"1ª ED.",
+"editora":"CIRCUITO",
+"categoria":"Cordel",
+"local":"RJ 2018",
+"paginas":"351",
+"quantidade":1
+},
+{
+"codigo":"GEB-227",
+"autor":"Paulo Coelho",
+"titulo":"Maktub",
+"edicao":"",
+"editora":"",
+"categoria":"Literatura",
+"local":"SP",
+"paginas":"192",
+"quantidade":1
+},
+{
+"codigo":"GEB-228",
+"autor":"Paulo Coelho",
+"titulo":"O Mosteiro Pode Acabar",
+"edicao":"",
+"editora":"",
+"categoria":"Literatura",
+"local":"SP1999",
+"paginas":"64",
+"quantidade":1
+},
+{
+"codigo":"GEB-229",
+"autor":"Paulo Coelho",
+"titulo":"O Alquimista",
+"edicao":"1ª ED.",
+"editora":"PARALELA",
+"categoria":"Literatura",
+"local":"SP 2017",
+"paginas":"206",
+"quantidade":1
+},
+{
+"codigo":"GEB-230",
+"autor":"Paulo Coelho",
+"titulo":"Onze Minutos",
+"edicao":"",
+"editora":"",
+"categoria":"Literatura",
+"local":"SP",
+"paginas":"208",
+"quantidade":1
+},
+{
+"codigo":"GEB-231",
+"autor":"Paulo Freire",
+"titulo":"A Importância do Ato de Ler",
+"edicao":"1ª ED.",
+"editora":"MODERNA",
+"categoria":"Literatura",
+"local":"SP 2003",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-232",
+"autor":"Paulo Freire",
+"titulo":"Conscientização",
+"edicao":"",
+"editora":"CORTEZ E MORAIS",
+"categoria":"Educação",
+"local":"SP 1979",
+"paginas":"102",
+"quantidade":1
+},
+{
+"codigo":"GEB-233",
+"autor":"Paulo Freire",
+"titulo":"Medo e Ousadia",
+"edicao":"7ª ED.",
+"editora":"PAZ E TERRA",
+"categoria":"Educação",
+"local":"RJ 1986",
+"paginas":"224",
+"quantidade":1
+},
+{
+"codigo":"GEB-234",
+"autor":"Paulo Mendes Campos",
+"titulo":"Contos de Shakespeare",
+"edicao":"9ª ED.",
+"editora":"PIXEL MÉDIA",
+"categoria":"Lit.inf.juv.",
+"local":"RJ 2006",
+"paginas":"87",
+"quantidade":1
+},
+{
+"codigo":"GEB-235",
+"autor":"Paulo Mendes Campos",
+"titulo":"Dom Raposo É Fogo",
+"edicao":"2ª ED.",
+"editora":"GOL",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2012",
+"paginas":"87",
+"quantidade":6
+},
+{
+"codigo":"GEB-236",
+"autor":"Rachel de Queiroz",
+"titulo":"A Beata Maria do Egito",
+"edicao":"3ª ED.",
+"editora":"ROCCO",
+"categoria":"Teatro",
+"local":"RJ 2003",
+"paginas":"79",
+"quantidade":1
+},
+{
+"codigo":"GEB-237",
+"autor":"Rachel de Queiroz",
+"titulo":"As Tres Marias",
+"edicao":"29ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Ficção Bras.",
+"local":"RJ 2018",
+"paginas":"255",
+"quantidade":1
+},
+{
+"codigo":"GEB-238",
+"autor":"Rachel de Queiroz",
+"titulo":"Caminho de Pedras",
+"edicao":"6ª ED.",
+"editora":"JOSE OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 1976",
+"paginas":"124",
+"quantidade":1
+},
+{
+"codigo":"GEB-239",
+"autor":"Rachel de Queiroz",
+"titulo":"Cenas Brasileiras",
+"edicao":"5ª ED.",
+"editora":"ATICA",
+"categoria":"Cronicas",
+"local":"SP 1997",
+"paginas":"116",
+"quantidade":1
+},
+{
+"codigo":"GEB-240",
+"autor":"Rachel de Queiroz",
+"titulo":"Cenas Brasileiras",
+"edicao":"9ª ED.",
+"editora":"ATICA",
+"categoria":"Cronicas",
+"local":"SP 2003",
+"paginas":"128",
+"quantidade":1
+},
+{
+"codigo":"GEB-241",
+"autor":"Rachel de Queiroz",
+"titulo":"O Homem e o Tempo",
+"edicao":"",
+"editora":"SICILIANO",
+"categoria":"Cronicas",
+"local":"SP 1995",
+"paginas":"189",
+"quantidade":1
+},
+{
+"codigo":"GEB-242",
+"autor":"Rachel de Queiroz",
+"titulo":"O Quinze",
+"edicao":"62ª ED.",
+"editora":"SICILIANO",
+"categoria":"Romance",
+"local":"SP 1993",
+"paginas":"149",
+"quantidade":1
+},
+{
+"codigo":"GEB-243",
+"autor":"Rachel de Queiroz",
+"titulo":"O Quinze",
+"edicao":"1ª ED.",
+"editora":"CAMERON",
+"categoria":"Romance",
+"local":"RJ 2018",
+"paginas":"207",
+"quantidade":2
+},
+{
+"codigo":"GEB-244",
+"autor":"Rachel de Queiroz",
+"titulo":"O Quinze",
+"edicao":"18ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 1975",
+"paginas":"138",
+"quantidade":1
+},
+{
+"codigo":"GEB-245",
+"autor":"Rachel de Queiroz",
+"titulo":"O Quinze",
+"edicao":"24ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 1978",
+"paginas":"112",
+"quantidade":1
+},
+{
+"codigo":"GEB-246",
+"autor":"Rachel de Queiroz",
+"titulo":"O Quinze",
+"edicao":"25ª ED.",
+"editora":"JOSÉ OLYMPIO",
+"categoria":"Romance",
+"local":"RJ 1979",
+"paginas":"112",
+"quantidade":1
+},
+{
+"codigo":"GEB-247",
+"autor":"Raul Pompéia",
+"titulo":"Literatura Comentada",
+"edicao":"",
+"editora":"ABRIL EDUC.",
+"categoria":"Ficção",
+"local":"SP 1981",
+"paginas":"109",
+"quantidade":1
+},
+{
+"codigo":"GEB-248",
+"autor":"Raul Pompéia",
+"titulo":"O Ateneu",
+"edicao":"",
+"editora":"PAULUS",
+"categoria":"Romance",
+"local":"SP 2005",
+"paginas":"191",
+"quantidade":5
+},
+{
+"codigo":"GEB-249",
+"autor":"Raul Pompéia",
+"titulo":"O Ateneu",
+"edicao":"2ª ED.",
+"editora":"FTD",
+"categoria":"Romance",
+"local":"SP 1992",
+"paginas":"199",
+"quantidade":1
+},
+{
+"codigo":"GEB-250",
+"autor":"Rubem Alves",
+"titulo":"A Alegria de Ensinar",
+"edicao":"7ª ED.",
+"editora":"PAPIRUS",
+"categoria":"Educação",
+"local":"CAMP. 2000",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-251",
+"autor":"Rubem Alves",
+"titulo":"Conversa Sobre Política",
+"edicao":"1ª ED.",
+"editora":"CIA EDIT.NAC.",
+"categoria":"Crônica",
+"local":"SP 2018",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-252",
+"autor":"Rubem Alves",
+"titulo":"Estórias de Quem Gosta de Ensinar",
+"edicao":"5ª ED.",
+"editora":"CORTEZ",
+"categoria":"Estórias",
+"local":"SP 1985",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-253",
+"autor":"Rubem Alves",
+"titulo":"Na Morada das Palavras",
+"edicao":"",
+"editora":"PAPIRUS",
+"categoria":"Crônicas",
+"local":"CAMP. 2000",
+"paginas":"",
+"quantidade":1
+},
+{
+"codigo":"GEB-254",
+"autor":"Rubem Braga",
+"titulo":"A Cidade e a Roça",
+"edicao":"2ª ED.",
+"editora":"DO AUTOR",
+"categoria":"Crônicas",
+"local":"RJ 1964",
+"paginas":"112",
+"quantidade":1
+},
+{
+"codigo":"GEB-255",
+"autor":"Rubem Braga",
+"titulo":"Ai de Ti, Copacabana",
+"edicao":"17ª ED.",
+"editora":"RECORD",
+"categoria":"Crônicas",
+"local":"RJ 1997",
+"paginas":"177",
+"quantidade":1
+},
+{
+"codigo":"GEB-256",
+"autor":"Rubem Braga",
+"titulo":"Coisas Simples do Cotidiano",
+"edicao":"3ª ED.",
+"editora":"LDM",
+"categoria":"Crônicas",
+"local":"SALV. 2018",
+"paginas":"85",
+"quantidade":1
+},
+{
+"codigo":"GEB-257",
+"autor":"Rubem Braga",
+"titulo":"Pequena Antologia do Braga",
+"edicao":"8ª ED.",
+"editora":"BEST SELLER",
+"categoria":"Crônicas",
+"local":"RJ 2006",
+"paginas":"123",
+"quantidade":1
+},
+{
+"codigo":"GEB-258",
+"autor":"Rubem Braga",
+"titulo":"Pequena Antologia do Braga",
+"edicao":"8ª ED.",
+"editora":"RECORD",
+"categoria":"Crônicas",
+"local":"RJ 1997",
+"paginas":"123",
+"quantidade":1
+},
+{
+"codigo":"GEB-259",
+"autor":"Rubem Braga",
+"titulo":"Um Cartão de Paris",
+"edicao":"3ª ED.",
+"editora":"RECORD",
+"categoria":"Crônicas",
+"local":"RJ 1997",
+"paginas":"139",
+"quantidade":1
+},
+{
+"codigo":"GEB-260",
+"autor":"Rubem Fonseca",
+"titulo":"Agosto (coleção Folha Gdes Escritores)",
+"edicao":"1ª ED.",
+"editora":"MÉDIA FASHION",
+"categoria":"História",
+"local":"RJ 2008",
+"paginas":"392",
+"quantidade":1
+},
+{
+"codigo":"GEB-261",
+"autor":"Rubem Fonseca",
+"titulo":"Agosto",
+"edicao":"9ª ED.",
+"editora":"EDIOURO",
+"categoria":"História",
+"local":"RJ 2018",
+"paginas":"348",
+"quantidade":1
+},
+{
+"codigo":"GEB-262",
+"autor":"Rubem Fonseca",
+"titulo":"Agosto",
+"edicao":"",
+"editora":"RECORD",
+"categoria":"História",
+"local":"RJ 1990",
+"paginas":"349",
+"quantidade":1
+},
+{
+"codigo":"GEB-263",
+"autor":"Rubem Fonseca",
+"titulo":"O Selvagem da Ópera",
+"edicao":"",
+"editora":"CIA DAS LETRAS",
+"categoria":"Romance",
+"local":"SP 1994",
+"paginas":"246",
+"quantidade":1
+},
+{
+"codigo":"GEB-264",
+"autor":"Rubem Fonseca",
+"titulo":"Bufo e Spallanzani",
+"edicao":"2ª ED.",
+"editora":"FRANCISCO ALVES",
+"categoria":"Romance",
+"local":"RJ 1985",
+"paginas":"335",
+"quantidade":1
+},
+{
+"codigo":"GEB-265",
+"autor":"Rui Barbosa",
+"titulo":"Campanhas Jornalísticas",
+"edicao":"",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"RJ 1998",
+"paginas":"356",
+"quantidade":1
+},
+{
+"codigo":"GEB-266",
+"autor":"Thiago de Melo",
+"titulo":"Poesia Comprometida com a Minha e a Tua Vida",
+"edicao":"4ª ED.",
+"editora":"CIVILIZ. BRASILEIRA",
+"categoria":"Poesia",
+"local":"RJ 1980",
+"paginas":"85",
+"quantidade":1
+},
+{
+"codigo":"GEB-267",
+"autor":"Vinicius de Morais",
+"titulo":"Nova Antologia Poética",
+"edicao":"1ª ED.",
+"editora":"CIA DE BOLSO",
+"categoria":"Poesia",
+"local":"SP 2005",
+"paginas":"253",
+"quantidade":1
+},
+{
+"codigo":"GEB-268",
+"autor":"Vinicius de Morais",
+"titulo":"Para Uma Menina com Uma Flor",
+"edicao":"19ª ED",
+"editora":"CIA DAS LETRAS",
+"categoria":"Crônicas",
+"local":"SP 1992",
+"paginas":"162",
+"quantidade":1
+},
+{
+"codigo":"GEB-269",
+"autor":"Walcyr Carrasco",
+"titulo":"Estrelas Tortas",
+"edicao":"3ª ED",
+"editora":"MODERNA",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2016",
+"paginas":"96",
+"quantidade":1
+},
+{
+"codigo":"GEB-270",
+"autor":"Zélia Gattai",
+"titulo":"Anarquistas Graças a Deus",
+"edicao":"25ª ED",
+"editora":"RECORD",
+"categoria":"Memórias",
+"local":"RJ 1997",
+"paginas":"271",
+"quantidade":1
+},
+{
+"codigo":"GEB-271",
+"autor":"Ziraldo",
+"titulo":"O Menino da Lua",
+"edicao":"2ª ED",
+"editora":"MELHORAMENTOS",
+"categoria":"Lit.inf.juv.",
+"local":"SP 2006",
+"paginas":"48",
+"quantidade":1
+},
+{
+"codigo":"GEB-272",
+"autor":"Ziraldo",
+"titulo":"Vito Grandam-Uma História de Vôos",
+"edicao":"",
+"editora":"MELHORAMENTOS",
+"categoria":"Lit.inf.juv.",
+"local":"SP 1995",
+"paginas":"142",
+"quantidade":1
+},
+{
+"codigo":"GEB-273",
+"autor":"Texto: Marcos Moreira",
+"titulo":"A Vida dos Grandes Brasileiros- Cândido Portinari",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP 2001",
+"paginas":"152",
+"quantidade":2
+},
+{
+"codigo":"GEB-274",
+"autor":"Texto:francisco P. da Silva",
+"titulo":"A Vida dos Grandes Brasileiros- Castro Alves",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP 2001",
+"paginas":"248",
+"quantidade":2
+},
+{
+"codigo":"GEB-275",
+"autor":"Texto: Pedro P. da S. Costa",
+"titulo":"A Vida dos Grandes Brasileiros- Machado de Assis",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP 2001",
+"paginas":"232",
+"quantidade":2
+},
+{
+"codigo":"GEB-276",
+"autor":"Texto: Marcio T. D’amaral",
+"titulo":"A Vida dos Grandes Brasileiros- Rui Barbosa",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP2001",
+"paginas":"280",
+"quantidade":2
+},
+{
+"codigo":"GEB-277",
+"autor":"Texto:francisco P. da Silva",
+"titulo":"A Vida dos Grandes Brasileiros- Santos Dumond",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP 2001",
+"paginas":"248",
+"quantidade":2
+},
+{
+"codigo":"GEB-278",
+"autor":"Texto:francisco P. da Silva",
+"titulo":"A Vida dos Grandes Brasileiros – Villa-Lobos0",
+"edicao":"",
+"editora":"ED. TRÊS",
+"categoria":"Literatura",
+"local":"SP 2001",
+"paginas":"215",
+"quantidade":2
+},
+{
+"codigo":"GEB-279",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Capitães de Areis",
+"edicao":"46ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"239",
+"quantidade":1
+},
+{
+"codigo":"GEB-280",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Dona Flor e Seus Dois Maridos",
+"edicao":"32ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"397",
+"quantidade":1
+},
+{
+"codigo":"GEB-281",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Gabriela Cravo e Canela",
+"edicao":"57ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"358",
+"quantidade":1
+},
+{
+"codigo":"GEB-282",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record - Jubiabá",
+"edicao":"37ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"331",
+"quantidade":1
+},
+{
+"codigo":"GEB-283",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Mar Morto",
+"edicao":"47ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"224",
+"quantidade":1
+},
+{
+"codigo":"GEB-284",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – o Capitão de Longo Curso",
+"edicao":"41ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"241",
+"quantidade":1
+},
+{
+"codigo":"GEB-285",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – o País do Carnaval",
+"edicao":"35ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"183",
+"quantidade":1
+},
+{
+"codigo":"GEB-286",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Seara Vermelho",
+"edicao":"34ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"335",
+"quantidade":1
+},
+{
+"codigo":"GEB-287",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Tenda dos Milagres",
+"edicao":"21ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"338",
+"quantidade":1
+},
+{
+"codigo":"GEB-288",
+"autor":"Jorge Amado (coleção Record)",
+"titulo":"Col. Record – Terras do Sem Fim",
+"edicao":"39ª ED.",
+"editora":"RECORD",
+"categoria":"Rom. Bras.",
+"local":"RJ 1978",
+"paginas":"271",
+"quantidade":1
+},
+{
+"codigo":"GEB-289",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Alexandre e Outros Heróis",
+"edicao":"27ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"198",
+"quantidade":1
+},
+{
+"codigo":"GEB-290",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Angústia",
+"edicao":"32ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"247",
+"quantidade":1
+},
+{
+"codigo":"GEB-291",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Caetés",
+"edicao":"22ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"RJ 1986",
+"paginas":"231",
+"quantidade":1
+},
+{
+"codigo":"GEB-292",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Cartas",
+"edicao":"6ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"RJ 1986",
+"paginas":"255",
+"quantidade":1
+},
+{
+"codigo":"GEB-293",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Memórias do Cárcere",
+"edicao":"21ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"378",
+"quantidade":1
+},
+{
+"codigo":"GEB-294",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Infância",
+"edicao":"22ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"275",
+"quantidade":1
+},
+{
+"codigo":"GEB-295",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Insônia",
+"edicao":"21ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"175",
+"quantidade":1
+},
+{
+"codigo":"GEB-296",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Linhas Tortas",
+"edicao":"13ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"306",
+"quantidade":1
+},
+{
+"codigo":"GEB-297",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"São Bernardo",
+"edicao":"45ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1985",
+"paginas":"216",
+"quantidade":1
+},
+{
+"codigo":"GEB-298",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Viagem",
+"edicao":"16ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"195",
+"quantidade":1
+},
+{
+"codigo":"GEB-299",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Vidas Secas",
+"edicao":"57ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"156",
+"quantidade":1
+},
+{
+"codigo":"GEB-300",
+"autor":"Graciliano Ramos (coleção Record)",
+"titulo":"Viventes das Alagoas",
+"edicao":"16ª ED.",
+"editora":"RECORD",
+"categoria":"Literatura",
+"local":"SP 1986",
+"paginas":"197",
+"quantidade":1
+}
+]</script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js';
+import {
+  getFirestore, collection, doc, addDoc, updateDoc, getDocs,
+  onSnapshot, writeBatch, query, orderBy
+} from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js';
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+} from 'https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGxgJqd2IDnHoFN6rJcIADem-BMS5y85w",
+  authDomain: "biblioteca-b8df6.firebaseapp.com",
+  projectId: "biblioteca-b8df6",
+  storageBucket: "biblioteca-b8df6.firebasestorage.app",
+  messagingSenderId: "793521070966",
+  appId: "1:793521070966:web:27949b0a3b0451c0cc9057"
+};
+
+const ADMIN_EMAIL = 'carolline.bhz@gmail.com';
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const auth = getAuth(fbApp);
+const livrosCol = collection(db, 'livros');
+const emprestimosCol = collection(db, 'emprestimos');
+
+let livros = [];
+let emprestimos = [];
+let editandoId = null;
+let livrosCarregados = false;
+let emprestimosCarregados = false;
+let currentUser = null;
+let isAdmin = false;
+let seedTentado = false;
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function fmtDateTime(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+function addDias(iso, dias){
+  const d = new Date(iso);
+  d.setDate(d.getDate() + Number(dias));
+  return d.toISOString();
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ---------- AUTENTICAÇÃO ----------
+function renderAuthBox(){
+  const box = document.getElementById('auth-box');
+  if(!currentUser){
+    box.innerHTML = `
+      <button class="auth-btn-google" id="btn-login-google">
+        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.1 29.5 3 24 3c-7.7 0-14.4 4.4-17.7 10.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-1.8 14-5l-6.5-5.3C29.5 36.2 26.9 37 24 37c-5.2 0-9.6-3.3-11.3-8l-6.6 5.1C9.5 40.5 16.2 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.5 5.3C40.9 36.7 43 30.8 43 24c0-1.2-.1-2.4-.4-3.5z"/></svg>
+        Entrar com Google
+      </button>`;
+    document.getElementById('btn-login-google').addEventListener('click', fazerLogin);
+  }else{
+    box.innerHTML = `
+      <div class="auth-user">
+        ${currentUser.photoURL? `<img src="${currentUser.photoURL}" alt="">`:''}
+        <div>
+          <div class="au-email">${escapeHtml(currentUser.email)}</div>
+          <span class="au-badge ${isAdmin?'ok':'no'}">${isAdmin?'Bibliotecária':'Sem permissão'}</span>
+        </div>
+        <button id="btn-logout">Sair</button>
+      </div>`;
+    document.getElementById('btn-logout').addEventListener('click', fazerLogout);
+  }
+}
+
+async function fazerLogin(){
+  try{
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  }catch(e){
+    console.error(e);
+    showToast('Não foi possível entrar com o Google.');
+  }
+}
+async function fazerLogout(){
+  try{ await signOut(auth); }catch(e){ console.error(e); }
+}
+
+onAuthStateChanged(auth, async (user)=>{
+  currentUser = user;
+  isAdmin = !!(user && user.email === ADMIN_EMAIL);
+  document.body.classList.toggle('is-admin', isAdmin);
+  renderAuthBox();
+  document.getElementById('acervo-admin-note').style.display = isAdmin ? 'none' : 'block';
+  document.getElementById('emprestimo-admin-note').style.display = isAdmin ? 'none' : 'block';
+  if(livrosCarregados) renderLivros();
+  if(emprestimosCarregados){ renderEmprestimos(); renderHistorico(); }
+  if(isAdmin && !seedTentado){
+    seedTentado = true;
+    await garantirSeed();
+  }
+});
+
+function getSeedLivros(){
+  try{
+    const raw = document.getElementById('seed-data').textContent;
+    const parsed = JSON.parse(raw);
+    return parsed.map(b => ({
+      codigo: b.codigo,
+      titulo: b.titulo,
+      autor: b.autor,
+      categoria: b.categoria,
+      editora: b.editora || '',
+      edicao: b.edicao || '',
+      local: b.local || '',
+      paginas: b.paginas || '',
+      quantidadeTotal: b.quantidade,
+      quantidadeDisponivel: b.quantidade,
+      ativo: true,
+      criadoEm: new Date().toISOString()
+    }));
+  }catch(e){ return []; }
+}
+
+async function garantirSeed(){
+  try{
+    const snap = await getDocs(livrosCol);
+    if(!snap.empty) return;
+    // Primeira vez: pré-carrega o acervo com os catálogos da biblioteca
+    // (Contos, Cordel e Poesia, Grandes Escritores Brasileiros)
+    const seed = getSeedLivros();
+    const batch = writeBatch(db);
+    seed.forEach(b => batch.set(doc(livrosCol), b));
+    await batch.commit();
+  }catch(e){
+    console.error('Erro ao semear acervo', e);
+  }
+}
+
+function checarCarregamentoInicial(){
+  if(livrosCarregados && emprestimosCarregados){
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+
+function iniciarListeners(){
+  onSnapshot(livrosCol, snap => {
+    livros = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    livrosCarregados = true;
+    checarCarregamentoInicial();
+    renderLivros();
+    renderPainel();
+    if(document.activeElement !== inputLivroBusca){
+      livroResultadosAtuais = buscarLivrosDisponiveis(inputLivroBusca.value.trim());
+    }else if(document.getElementById('livro-resultados').classList.contains('show')){
+      livroResultadosAtuais = buscarLivrosDisponiveis(inputLivroBusca.value.trim());
+      renderLivroResultados();
+    }
+    if(livroSelecionadoId && !livros.some(l=>l.id===livroSelecionadoId)){
+      limparSelecaoLivro();
+    }
+  }, err => {
+    console.error(err);
+    showToast('Erro ao ler o acervo no Firebase.');
+  });
+
+  onSnapshot(query(emprestimosCol, orderBy('dataEmprestimo','desc')), snap => {
+    emprestimos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    emprestimosCarregados = true;
+    checarCarregamentoInicial();
+    renderEmprestimos();
+    renderHistorico();
+    renderPainel();
+  }, err => {
+    console.error(err);
+    showToast('Erro ao ler os empréstimos no Firebase.');
+  });
+}
+
+// ---------- TABS ----------
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- PAINEL (DASHBOARD) ----------
+function renderPainel(){
+  if(!livrosCarregados && !emprestimosCarregados) return;
+  const totalTitulos = livros.length;
+  const ativos = livros.filter(l=>l.ativo).length;
+  const totalExemplares = livros.reduce((s,l)=>s+(l.quantidadeTotal||0),0);
+  const abertos = emprestimos.filter(e=>!e.dataDevolucao);
+  const emprestadosAgora = abertos.length;
+  const agora = new Date();
+  const atrasados = abertos.filter(e=> e.dataPrevista && new Date(e.dataPrevista) < agora).length;
+
+  document.getElementById('stat-titulos').textContent = totalTitulos;
+  document.getElementById('stat-titulos-sub').textContent = `${ativos} ativo(s) · ${totalTitulos-ativos} inativo(s)`;
+  document.getElementById('stat-exemplares').textContent = totalExemplares;
+  document.getElementById('stat-exemplares-sub').textContent = `distribuídos em ${totalTitulos} título(s)`;
+  document.getElementById('stat-emprestados').textContent = emprestadosAgora;
+  document.getElementById('stat-emprestados-sub').textContent = totalExemplares? `${Math.round(emprestadosAgora/totalExemplares*100)}% do acervo fora` : '';
+  document.getElementById('stat-atrasados').textContent = atrasados;
+  document.getElementById('stat-atrasados-sub').textContent = atrasados>0? 'requer atenção' : 'tudo em dia';
+}
+
+
+function renderCategoriaFiltro(){
+  const sel = document.getElementById('filtro-categoria');
+  const atual = sel.value;
+  const cats = [...new Set(livros.map(l=>l.categoria).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todas</option>' + cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  sel.value = atual;
+}
+function renderLivros(){
+  renderCategoriaFiltro();
+  const q = document.getElementById('busca-livro').value.trim().toLowerCase();
+  const catF = document.getElementById('filtro-categoria').value;
+  const statusF = document.getElementById('filtro-status').value;
+
+  let lista = livros.filter(l=>{
+    if(catF && l.categoria !== catF) return false;
+    if(statusF === 'ativo' && !l.ativo) return false;
+    if(statusF === 'inativo' && l.ativo) return false;
+    if(q){
+      const alvo = (l.codigo+' '+l.titulo+' '+l.autor+' '+l.categoria+' '+(l.editora||'')).toLowerCase();
+      if(!alvo.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=>a.titulo.localeCompare(b.titulo,'pt-BR'));
+
+  document.getElementById('contagem-livros').textContent =
+    `${lista.length} livro(s) de ${livros.length} cadastrado(s)`;
+
+  const grid = document.getElementById('grid-livros');
+  if(lista.length===0){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">Nenhum livro encontrado. Cadastre o primeiro título acima.</div>`;
+    return;
+  }
+  grid.innerHTML = lista.map(l=>`
+    <div class="catalog-card ${l.ativo? '':'inativo'}">
+      <div class="cc-codigo">${escapeHtml(l.codigo)}</div>
+      <p class="cc-titulo">${escapeHtml(l.titulo)}</p>
+      <div class="cc-autor">${escapeHtml(l.autor||'Autor não informado')}</div>
+      ${l.categoria? `<span class="cc-cat">${escapeHtml(l.categoria)}</span>`:''}
+      ${(l.editora || l.edicao || l.local || l.paginas) ? `<div class="cc-meta">
+        ${l.editora? `<span>${escapeHtml(l.editora)}</span>`:''}${l.edicao? ` &middot; <span>${escapeHtml(l.edicao)}</span>`:''}${l.local? ` &middot; <span>${escapeHtml(l.local)}</span>`:''}${l.paginas? ` &middot; <span>${escapeHtml(l.paginas)} pág.</span>`:''}
+      </div>`:''}
+      <div class="cc-row">
+        <div class="cc-qty">Disponível: <b>${l.quantidadeDisponivel}</b> / ${l.quantidadeTotal}</div>
+        <div class="cc-status ${l.ativo?'on':'off'}">${l.ativo?'Ativo':'Inativo'}</div>
+      </div>
+      ${isAdmin? `<div class="cc-actions">
+        <button class="btn small ghost" data-edit="${l.id}">Editar</button>
+        <button class="btn small ${l.ativo?'rust':'gold'}" data-toggle="${l.id}">${l.ativo?'Inativar':'Ativar'}</button>
+      </div>` : ''}
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('[data-edit]').forEach(b=>b.addEventListener('click', ()=>openEditar(b.dataset.edit)));
+  grid.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click', ()=>toggleAtivo(b.dataset.toggle)));
+}
+
+document.getElementById('btn-add-livro').addEventListener('click', async ()=>{
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para cadastrar livros.'); return; }
+  const codigo = document.getElementById('f-codigo').value.trim();
+  const titulo = document.getElementById('f-titulo').value.trim();
+  const autor = document.getElementById('f-autor').value.trim();
+  const categoria = document.getElementById('f-categoria').value.trim();
+  const quantidade = parseInt(document.getElementById('f-quantidade').value) || 0;
+  const editora = document.getElementById('f-editora').value.trim();
+  const edicao = document.getElementById('f-edicao').value.trim();
+  const local = document.getElementById('f-local').value.trim();
+  const paginas = document.getElementById('f-paginas').value.trim();
+
+  if(!codigo || !titulo || quantidade < 1){
+    showToast('Preencha código, título e uma quantidade válida.');
+    return;
+  }
+  if(livros.some(l=>l.codigo.toLowerCase()===codigo.toLowerCase())){
+    showToast('Já existe um livro com esse código.');
+    return;
+  }
+  try{
+    await addDoc(livrosCol, {
+      codigo, titulo, autor, categoria, editora, edicao, local, paginas,
+      quantidadeTotal: quantidade, quantidadeDisponivel: quantidade,
+      ativo: true, criadoEm: new Date().toISOString()
+    });
+  }catch(e){
+    console.error(e);
+    showToast('Erro ao cadastrar no Firebase.');
+    return;
+  }
+  ['f-codigo','f-titulo','f-autor','f-categoria','f-editora','f-edicao','f-local','f-paginas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-quantidade').value = 1;
+  showToast('Livro cadastrado com sucesso.');
+});
+
+function openEditar(id){
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para editar livros.'); return; }
+  const l = livros.find(x=>x.id===id);
+  if(!l) return;
+  editandoId = id;
+  document.getElementById('e-codigo').value = l.codigo;
+  document.getElementById('e-titulo').value = l.titulo;
+  document.getElementById('e-autor').value = l.autor;
+  document.getElementById('e-categoria').value = l.categoria;
+  document.getElementById('e-editora').value = l.editora || '';
+  document.getElementById('e-edicao').value = l.edicao || '';
+  document.getElementById('e-local').value = l.local || '';
+  document.getElementById('e-paginas').value = l.paginas || '';
+  document.getElementById('e-quantidade').value = l.quantidadeTotal;
+  document.getElementById('modal-editar').classList.add('show');
+}
+document.getElementById('btn-cancelar-editar').addEventListener('click', ()=>{
+  document.getElementById('modal-editar').classList.remove('show');
+  editandoId = null;
+});
+document.getElementById('btn-salvar-editar').addEventListener('click', async ()=>{
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para editar livros.'); return; }
+  const l = livros.find(x=>x.id===editandoId);
+  if(!l) return;
+  const novoCodigo = document.getElementById('e-codigo').value.trim();
+  const novoTitulo = document.getElementById('e-titulo').value.trim();
+  const novaQtd = parseInt(document.getElementById('e-quantidade').value);
+
+  if(!novoCodigo || !novoTitulo || isNaN(novaQtd) || novaQtd < 0){
+    showToast('Verifique os dados informados.');
+    return;
+  }
+  if(livros.some(x=>x.id!==l.id && x.codigo.toLowerCase()===novoCodigo.toLowerCase())){
+    showToast('Já existe outro livro com esse código.');
+    return;
+  }
+  const emprestados = l.quantidadeTotal - l.quantidadeDisponivel;
+  if(novaQtd < emprestados){
+    showToast(`Há ${emprestados} exemplar(es) emprestado(s). Quantidade não pode ser menor que isso.`);
+    return;
+  }
+  try{
+    await updateDoc(doc(db,'livros', l.id), {
+      codigo: novoCodigo,
+      titulo: novoTitulo,
+      autor: document.getElementById('e-autor').value.trim(),
+      categoria: document.getElementById('e-categoria').value.trim(),
+      editora: document.getElementById('e-editora').value.trim(),
+      edicao: document.getElementById('e-edicao').value.trim(),
+      local: document.getElementById('e-local').value.trim(),
+      paginas: document.getElementById('e-paginas').value.trim(),
+      quantidadeTotal: novaQtd,
+      quantidadeDisponivel: novaQtd - emprestados
+    });
+  }catch(e){
+    console.error(e);
+    showToast('Erro ao salvar no Firebase.');
+    return;
+  }
+  document.getElementById('modal-editar').classList.remove('show');
+  editandoId = null;
+  showToast('Livro atualizado.');
+});
+
+async function toggleAtivo(id){
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para ativar/inativar livros.'); return; }
+  const l = livros.find(x=>x.id===id);
+  if(!l) return;
+  try{
+    await updateDoc(doc(db,'livros', id), { ativo: !l.ativo });
+    showToast(!l.ativo? 'Livro ativado.' : 'Livro inativado.');
+  }catch(e){
+    console.error(e);
+    showToast('Erro ao atualizar no Firebase.');
+  }
+}
+
+document.getElementById('busca-livro').addEventListener('input', renderLivros);
+document.getElementById('filtro-categoria').addEventListener('change', renderLivros);
+document.getElementById('filtro-status').addEventListener('change', renderLivros);
+
+// ---------- EMPRESTIMOS ----------
+let livroSelecionadoId = '';
+let livroResultadosAtuais = [];
+let livroHlIndex = -1;
+
+function buscarLivrosDisponiveis(q){
+  const disponiveis = livros.filter(l=>l.ativo && l.quantidadeDisponivel > 0);
+  if(!q){
+    return disponiveis.sort((a,b)=>a.titulo.localeCompare(b.titulo,'pt-BR')).slice(0,8);
+  }
+  const nq = q.toLowerCase();
+  return disponiveis.filter(l=>{
+    const alvo = (l.titulo+' '+l.autor+' '+l.categoria+' '+l.codigo).toLowerCase();
+    return alvo.includes(nq);
+  }).sort((a,b)=>a.titulo.localeCompare(b.titulo,'pt-BR')).slice(0,8);
+}
+
+function renderLivroResultados(){
+  const dd = document.getElementById('livro-resultados');
+  if(livroResultadosAtuais.length===0){
+    dd.innerHTML = `<div class="li-empty">Nenhum livro disponível encontrado</div>`;
+    dd.classList.add('show');
+    return;
+  }
+  dd.innerHTML = livroResultadosAtuais.map((l,i)=>`
+    <div class="livro-item ${i===livroHlIndex?'hl':''}" data-id="${l.id}">
+      <div class="li-titulo">${escapeHtml(l.titulo)}</div>
+      <div class="li-meta">${escapeHtml(l.autor||'Autor não informado')} &middot; <b>${escapeHtml(l.codigo)}</b> &middot; ${escapeHtml(l.categoria||'')} &middot; ${l.quantidadeDisponivel} disp.</div>
+    </div>
+  `).join('');
+  dd.classList.add('show');
+  dd.querySelectorAll('.livro-item').forEach(el=>{
+    el.addEventListener('mousedown', (e)=>{
+      e.preventDefault();
+      selecionarLivro(el.dataset.id);
+    });
+  });
+}
+
+function selecionarLivro(id){
+  const l = livros.find(x=>x.id===id);
+  if(!l) return;
+  livroSelecionadoId = id;
+  document.getElementById('f-livro-id').value = id;
+  document.getElementById('f-livro-busca').value = '';
+  document.getElementById('livro-resultados').classList.remove('show');
+  const chip = document.getElementById('livro-selecionado');
+  chip.style.display = 'flex';
+  chip.innerHTML = `
+    <div class="lc-info"><b>${escapeHtml(l.titulo)}</b><span>${escapeHtml(l.autor||'')} &middot; ${escapeHtml(l.codigo)} &middot; ${l.quantidadeDisponivel} disp.</span></div>
+    <button type="button" id="btn-trocar-livro">Trocar</button>
+  `;
+  document.getElementById('btn-trocar-livro').addEventListener('click', ()=>{
+    limparSelecaoLivro();
+    document.getElementById('f-livro-busca').focus();
+  });
+}
+
+function limparSelecaoLivro(){
+  livroSelecionadoId = '';
+  document.getElementById('f-livro-id').value = '';
+  document.getElementById('livro-selecionado').style.display = 'none';
+  document.getElementById('livro-selecionado').innerHTML = '';
+  document.getElementById('f-livro-busca').value = '';
+}
+
+const inputLivroBusca = document.getElementById('f-livro-busca');
+inputLivroBusca.addEventListener('input', ()=>{
+  livroHlIndex = -1;
+  livroResultadosAtuais = buscarLivrosDisponiveis(inputLivroBusca.value.trim());
+  renderLivroResultados();
+});
+inputLivroBusca.addEventListener('focus', ()=>{
+  livroHlIndex = -1;
+  livroResultadosAtuais = buscarLivrosDisponiveis(inputLivroBusca.value.trim());
+  renderLivroResultados();
+});
+inputLivroBusca.addEventListener('keydown', (e)=>{
+  if(!document.getElementById('livro-resultados').classList.contains('show')) return;
+  if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    livroHlIndex = Math.min(livroHlIndex+1, livroResultadosAtuais.length-1);
+    renderLivroResultados();
+  }else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    livroHlIndex = Math.max(livroHlIndex-1, 0);
+    renderLivroResultados();
+  }else if(e.key === 'Enter'){
+    e.preventDefault();
+    if(livroHlIndex >= 0 && livroResultadosAtuais[livroHlIndex]){
+      selecionarLivro(livroResultadosAtuais[livroHlIndex].id);
+    }else if(livroResultadosAtuais.length === 1){
+      selecionarLivro(livroResultadosAtuais[0].id);
+    }
+  }else if(e.key === 'Escape'){
+    document.getElementById('livro-resultados').classList.remove('show');
+  }
+});
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('#f-livro-busca') && !e.target.closest('#livro-resultados')){
+    document.getElementById('livro-resultados').classList.remove('show');
+  }
+});
+
+document.getElementById('btn-add-emprestimo').addEventListener('click', async ()=>{
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para registrar empréstimos.'); return; }
+  const livroId = livroSelecionadoId;
+  const nome = document.getElementById('f-aluno-nome').value.trim();
+  const tel = document.getElementById('f-aluno-tel').value.trim();
+  const turma = document.getElementById('f-aluno-turma').value.trim();
+  const prazoDias = parseInt(document.getElementById('f-prazo-dias').value) || 7;
+
+  if(!livroId || !nome || !tel){
+    showToast('Busque e selecione o livro, e informe nome e telefone do aluno.');
+    return;
+  }
+  if(prazoDias < 1){
+    showToast('O prazo de devolução deve ser de pelo menos 1 dia.');
+    return;
+  }
+  const livro = livros.find(l=>l.id===livroId);
+  if(!livro || livro.quantidadeDisponivel < 1){
+    showToast('Este livro não está mais disponível.');
+    limparSelecaoLivro();
+    return;
+  }
+  const agora = new Date().toISOString();
+  try{
+    const batch = writeBatch(db);
+    batch.update(doc(db,'livros', livro.id), { quantidadeDisponivel: livro.quantidadeDisponivel - 1 });
+    batch.set(doc(emprestimosCol), {
+      livroId: livro.id, livroTitulo: livro.titulo, livroCodigo: livro.codigo,
+      alunoNome: nome, alunoTelefone: tel, alunoTurma: turma,
+      dataEmprestimo: agora,
+      prazoDiasInicial: prazoDias,
+      dataPrevista: addDias(agora, prazoDias),
+      dataDevolucao: null,
+      devolvidoPor: null,
+      registradoPor: currentUser.email,
+      renovacoes: []
+    });
+    await batch.commit();
+  }catch(e){
+    console.error(e);
+    showToast('Erro ao registrar empréstimo no Firebase.');
+    return;
+  }
+  document.getElementById('f-aluno-nome').value = '';
+  document.getElementById('f-aluno-tel').value = '';
+  document.getElementById('f-aluno-turma').value = '';
+  document.getElementById('f-prazo-dias').value = 7;
+  limparSelecaoLivro();
+  showToast('Empréstimo registrado.');
+});
+
+// ---------- PAGINAÇÃO ----------
+const PAG_TAMANHO = 10;
+let paginaEmprestimos = 1;
+let paginaHistorico = 1;
+
+function renderPaginacao(containerId, totalItens, paginaAtual, onChange){
+  const el = document.getElementById(containerId);
+  const totalPaginas = Math.max(1, Math.ceil(totalItens / PAG_TAMANHO));
+  if(paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+  el.innerHTML = `
+    <button id="${containerId}-prev" ${paginaAtual<=1?'disabled':''}>‹ Anterior</button>
+    <span class="pag-info">Página ${paginaAtual} de ${totalPaginas}</span>
+    <button id="${containerId}-next" ${paginaAtual>=totalPaginas?'disabled':''}>Próxima ›</button>
+  `;
+  document.getElementById(containerId+'-prev').addEventListener('click', ()=>onChange(paginaAtual-1));
+  document.getElementById(containerId+'-next').addEventListener('click', ()=>onChange(paginaAtual+1));
+  return paginaAtual;
+}
+
+function estaAtrasado(e){
+  return !e.dataDevolucao && e.dataPrevista && new Date(e.dataPrevista) < new Date();
+}
+
+function renderEmprestimos(){
+  const q = document.getElementById('busca-emprestimo').value.trim().toLowerCase();
+  const filtro = document.getElementById('filtro-emprestimo').value;
+
+  let lista = emprestimos.filter(e=>{
+    if(filtro==='aberto' && e.dataDevolucao) return false;
+    if(filtro==='devolvido' && !e.dataDevolucao) return false;
+    if(filtro==='atrasado' && !estaAtrasado(e)) return false;
+    if(q){
+      const alvo = (e.alunoNome+' '+e.alunoTelefone+' '+(e.alunoTurma||'')+' '+e.livroTitulo+' '+e.livroCodigo).toLowerCase();
+      if(!alvo.includes(q)) return false;
+    }
+    return true;
+  }).sort((a,b)=> new Date(b.dataEmprestimo) - new Date(a.dataEmprestimo));
+
+  document.getElementById('contagem-emprestimos').textContent =
+    `${lista.length} registro(s) de ${emprestimos.length} no total`;
+
+  paginaEmprestimos = renderPaginacao('pag-emprestimos', lista.length, paginaEmprestimos, (p)=>{ paginaEmprestimos = p; renderEmprestimos(); });
+  const inicio = (paginaEmprestimos-1) * PAG_TAMANHO;
+  const paginaItens = lista.slice(inicio, inicio + PAG_TAMANHO);
+
+  const tbody = document.getElementById('tbody-emprestimos');
+  if(paginaItens.length===0){
+    tbody.innerHTML = `<tr><td colspan="9" class="empty">Nenhum empréstimo encontrado.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = paginaItens.map(e=>{
+    const atrasado = estaAtrasado(e);
+    let statusHtml;
+    if(e.dataDevolucao){
+      statusHtml = `<span class="badge devolvido">Devolvido</span>`;
+    }else if(atrasado){
+      statusHtml = `<span class="badge atrasado">Atrasado</span>`;
+    }else{
+      statusHtml = `<span class="badge aberto">Em aberto</span>`;
+    }
+    const renovCount = (e.renovacoes||[]).length;
+    const acoes = (!e.dataDevolucao && isAdmin) ? `
+      <div class="row-actions">
+        <button class="btn small ghost" data-renovar="${e.id}">Renovar</button>
+        <button class="btn small" data-devolver="${e.id}">Devolução</button>
+      </div>` : '';
+    return `
+    <tr class="${atrasado?'atrasado':''}">
+      <td><b>${escapeHtml(e.livroTitulo)}</b><br><span style="color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;">${escapeHtml(e.livroCodigo)}</span></td>
+      <td>${escapeHtml(e.alunoNome)}</td>
+      <td>${escapeHtml(e.alunoTurma||'—')}</td>
+      <td>${escapeHtml(e.alunoTelefone)}</td>
+      <td>${fmtDateTime(e.dataEmprestimo)}</td>
+      <td>${fmtDateTime(e.dataPrevista)}${renovCount? `<br><span style="color:var(--muted);font-size:10.5px;">renovado ${renovCount}x</span>`:''}</td>
+      <td>${e.dataDevolucao ? fmtDateTime(e.dataDevolucao) : '—'}</td>
+      <td>${statusHtml}</td>
+      <td>${acoes}</td>
+    </tr>`;
+  }).join('');
+
+  tbody.querySelectorAll('[data-devolver]').forEach(b=>b.addEventListener('click', ()=>registrarDevolucao(b.dataset.devolver)));
+  tbody.querySelectorAll('[data-renovar]').forEach(b=>b.addEventListener('click', ()=>abrirRenovar(b.dataset.renovar)));
+}
+
+async function registrarDevolucao(id){
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para registrar devoluções.'); return; }
+  const e = emprestimos.find(x=>x.id===id);
+  if(!e || e.dataDevolucao) return;
+  const livro = livros.find(l=>l.id===e.livroId);
+  try{
+    const batch = writeBatch(db);
+    batch.update(doc(db,'emprestimos', id), { dataDevolucao: new Date().toISOString(), devolvidoPor: currentUser.email });
+    if(livro){
+      const novaDisp = Math.min(livro.quantidadeTotal, livro.quantidadeDisponivel + 1);
+      batch.update(doc(db,'livros', livro.id), { quantidadeDisponivel: novaDisp });
+    }
+    await batch.commit();
+    showToast('Devolução registrada.');
+  }catch(e){
+    console.error(e);
+    showToast('Erro ao registrar devolução no Firebase.');
+  }
+}
+
+// ---------- RENOVAÇÃO ----------
+let renovandoId = null;
+function abrirRenovar(id){
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para renovar empréstimos.'); return; }
+  const e = emprestimos.find(x=>x.id===id);
+  if(!e || e.dataDevolucao) return;
+  renovandoId = id;
+  document.getElementById('renovar-info').textContent =
+    `${e.livroTitulo} · ${e.alunoNome} — previsão atual: ${fmtDateTime(e.dataPrevista)}`;
+  document.getElementById('r-dias').value = e.prazoDiasInicial || 7;
+  document.getElementById('modal-renovar').classList.add('show');
+}
+document.getElementById('btn-cancelar-renovar').addEventListener('click', ()=>{
+  document.getElementById('modal-renovar').classList.remove('show');
+  renovandoId = null;
+});
+document.getElementById('btn-confirmar-renovar').addEventListener('click', async ()=>{
+  if(!isAdmin){ showToast('Faça login com a conta autorizada para renovar empréstimos.'); return; }
+  const e = emprestimos.find(x=>x.id===renovandoId);
+  if(!e) return;
+  const dias = parseInt(document.getElementById('r-dias').value);
+  if(!dias || dias < 1){
+    showToast('Informe uma quantidade de dias válida.');
+    return;
+  }
+  const agora = new Date().toISOString();
+  const novaPrevista = addDias(agora, dias);
+  const novaRenovacao = { data: agora, diasAdicionados: dias, novaDataPrevista: novaPrevista, usuario: currentUser.email };
+  try{
+    await updateDoc(doc(db,'emprestimos', e.id), {
+      dataPrevista: novaPrevista,
+      renovacoes: [...(e.renovacoes||[]), novaRenovacao]
+    });
+    document.getElementById('modal-renovar').classList.remove('show');
+    renovandoId = null;
+    showToast('Empréstimo renovado.');
+  }catch(err){
+    console.error(err);
+    showToast('Erro ao renovar no Firebase.');
+  }
+});
+
+document.getElementById('busca-emprestimo').addEventListener('input', ()=>{ paginaEmprestimos=1; renderEmprestimos(); });
+document.getElementById('filtro-emprestimo').addEventListener('change', ()=>{ paginaEmprestimos=1; renderEmprestimos(); });
+
+// ---------- HISTÓRICO ----------
+function montarEventosHistorico(){
+  const eventos = [];
+  emprestimos.forEach(e=>{
+    eventos.push({
+      tipo: 'Empréstimo', data: e.dataEmprestimo, livro: e.livroTitulo, aluno: e.alunoNome,
+      turma: e.alunoTurma||'', usuario: e.registradoPor||'—',
+      detalhe: `Prazo inicial: ${e.prazoDiasInicial||7} dia(s) · previsão ${fmtDateTime(e.dataPrevista)}`
+    });
+    (e.renovacoes||[]).forEach(r=>{
+      eventos.push({
+        tipo: 'Renovação', data: r.data, livro: e.livroTitulo, aluno: e.alunoNome,
+        turma: e.alunoTurma||'', usuario: r.usuario||'—',
+        detalhe: `+${r.diasAdicionados} dia(s) · nova previsão ${fmtDateTime(r.novaDataPrevista)}`
+      });
+    });
+    if(e.dataDevolucao){
+      eventos.push({
+        tipo: 'Devolução', data: e.dataDevolucao, livro: e.livroTitulo, aluno: e.alunoNome,
+        turma: e.alunoTurma||'', usuario: e.devolvidoPor||'—', detalhe: ''
+      });
+    }
+  });
+  return eventos.sort((a,b)=> new Date(b.data) - new Date(a.data));
+}
+
+function renderHistorico(){
+  const q = document.getElementById('busca-historico').value.trim().toLowerCase();
+  const tipoF = document.getElementById('filtro-historico-tipo').value;
+  let eventos = montarEventosHistorico().filter(ev=>{
+    if(tipoF && ev.tipo !== tipoF) return false;
+    if(q){
+      const alvo = (ev.aluno+' '+ev.turma+' '+ev.livro).toLowerCase();
+      if(!alvo.includes(q)) return false;
+    }
+    return true;
+  });
+
+  document.getElementById('contagem-historico').textContent = `${eventos.length} evento(s) registrado(s)`;
+
+  paginaHistorico = renderPaginacao('pag-historico', eventos.length, paginaHistorico, (p)=>{ paginaHistorico = p; renderHistorico(); });
+  const inicio = (paginaHistorico-1) * PAG_TAMANHO;
+  const pagina = eventos.slice(inicio, inicio + PAG_TAMANHO);
+
+  const tbody = document.getElementById('tbody-historico');
+  if(pagina.length===0){
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">Nenhum evento encontrado.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = pagina.map(ev=>`
+    <tr>
+      <td>${fmtDateTime(ev.data)}</td>
+      <td><span class="evt-tag" data-tipo="${ev.tipo}">${ev.tipo}</span></td>
+      <td>${escapeHtml(ev.livro)}</td>
+      <td>${escapeHtml(ev.aluno)}</td>
+      <td>${escapeHtml(ev.turma||'—')}</td>
+      <td style="font-size:12px;color:var(--muted);">${escapeHtml(ev.detalhe)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;">${escapeHtml(ev.usuario)}</td>
+    </tr>
+  `).join('');
+}
+document.getElementById('busca-historico').addEventListener('input', ()=>{ paginaHistorico=1; renderHistorico(); });
+document.getElementById('filtro-historico-tipo').addEventListener('change', ()=>{ paginaHistorico=1; renderHistorico(); });
+
+// ---------- INIT ----------
+(async function init(){
+  iniciarListeners();
+})();
+</script>
+</body>
+</html>
